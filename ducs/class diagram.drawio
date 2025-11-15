@@ -1,0 +1,313 @@
+<mxfile host="65bd71144e">
+    <diagram id="dSvigm6LAl4hmA-Wz-c9" name="Class Diagram">
+        <mxGraphModel dx="428" dy="413" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="122" value="کاربر&#xa;&#xa;- شناسه_کاربری: string&#xa;- رمزعبور: رشته&#xa;- نقش: نقش_کاربری&#xa;- فعال: بولین&#xa;&#xa;+ ورود(): بولین&#xa;+ خروج(): خالی&#xa;+ بروزرسانی_پروفایل(): خالی" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="80" width="220" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="123" value="دانشجو&#xa;&#xa;- شماره_دانشجویی: رشته&#xa;- نام: رشته&#xa;- دانشکده: رشته&#xa;&#xa;+ مشاهده_اعلان‌ها(): لیست&lt;اعلان&gt;&#xa;+ ثبت_گزارش_خرابی(): خالی" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="340" width="240" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="183" value="" style="endArrow=none;html=1;" edge="1" parent="123">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint y="80" as="sourcePoint"/>
+                        <mxPoint x="240" y="80" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="124" value="استاد&#xa;&#xa;- شناسه_کارمندی: رشته&#xa;- نام: رشته&#xa;- بخش: رشته&#xa;&#xa;+ رزرو_سایت(تاریخ، زمان): رزرو&#xa;+ ثبت_گزارش_خرابی(): خالی&#xa;+ مشاهده_اعلان‌ها(): لیست&lt;اعلان&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+                    <mxGeometry x="320" y="340" width="260" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="184" value="" style="endArrow=none;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="124" target="124">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint y="79.70999999999998" as="sourcePoint"/>
+                        <mxPoint x="240" y="79.70999999999998" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="125" value="ادمین&#xa;&#xa;- شناسه_ادمین: رشته&#xa;- نام: رشته&#xa;- سطح_دسترسی: عدد&#xa;&#xa;+ مشاهده_وضعیت_میزها(): لیست&lt;میز&gt;&#xa;+ مدیریت_گزارش_خرابی(): خالی&#xa;+ مدیریت_نرم‌افزارها(): خالی&#xa;+ جست‌وجوی_پیشرفته(): لیست&#xa;+ مدیریت_کاربران_و_نقش‌ها(): خالی&#xa;+ تایید_رزرو(شناسه): بولین&#xa;+ خروجی_داده(فرمت): فایل&#xa;+ مدیریت_اعلان‌ها(): خالی&#xa;+ مشاهده_لاگ‌ها(): لیست&lt;لاگ&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+                    <mxGeometry x="640" y="340" width="280" height="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="185" value="" style="endArrow=none;html=1;" edge="1" parent="125">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint y="83.70999999999998" as="sourcePoint"/>
+                        <mxPoint x="280" y="84" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="126" value="میز&#xa;&#xa;- شناسه_میز: رشته&#xa;- نوع: رشته&#xa;- وضعیت: وضعیت_میز&#xa;- مکان: رشته&#xa;- تاریخ_آخرین_تعمیر: تاریخ&#xa;&#xa;+ اختصاص_به_کاربر(شناسه): بولین&#xa;+ آزادسازی_میز(): خالی&#xa;+ بروزرسانی_وضعیت(وضعیت): خالی&#xa;+ بررسی_در_دسترس_بودن(): بولین" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+                    <mxGeometry x="1000" y="80" width="260" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="127" value="جلسه_استفاده&#xa;&#xa;- شناسه_جلسه: رشته&#xa;- شناسه_کاربر: رشته&#xa;- شناسه_میز: رشته&#xa;- زمان_ورود: تاریخ_زمان&#xa;- زمان_خروج: تاریخ_زمان&#xa;- مدت_زمان: عدد&#xa;&#xa;+ ثبت_ورود(): خالی&#xa;+ ثبت_خروج(): خالی&#xa;+ محاسبه_مدت_زمان(): عدد" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+                    <mxGeometry x="1000" y="340" width="260" height="190" as="geometry"/>
+                </mxCell>
+                <mxCell id="190" value="" style="endArrow=none;html=1;" edge="1" parent="127">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint y="125" as="sourcePoint"/>
+                        <mxPoint x="260" y="125" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="128" value="گزارش_خرابی&#xa;&#xa;- شناسه_گزارش: رشته&#xa;- شناسه_میز: رشته&#xa;- شناسه_گزارش_دهنده: رشته&#xa;- شرح: رشته&#xa;- تاریخ_گزارش: تاریخ_زمان&#xa;- وضعیت: وضعیت_گزارش&#xa;- اولویت: اولویت&#xa;&#xa;+ ارسال(): بولین&#xa;+ بروزرسانی_وضعیت(وضعیت): خالی&#xa;+ اختصاص_به_تکنسین(شناسه): خالی" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+                    <mxGeometry x="640" y="680" width="280" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="188" value="" style="endArrow=none;html=1;" edge="1" parent="128">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint y="140" as="sourcePoint"/>
+                        <mxPoint x="280" y="140" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="129" value="نرم‌افزار&#xa;&#xa;- شناسه_نرم‌افزار: رشته&#xa;- نام: رشته&#xa;- نسخه: رشته&#xa;- کلید_لایسنس: رشته&#xa;- تاریخ_نصب: تاریخ&#xa;&#xa;+ نصب(): بولین&#xa;+ بروزرسانی(نسخه): خالی&#xa;+ حذف(): بولین" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+                    <mxGeometry x="1320" y="80" width="240" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="130" value="رزرو&#xa;&#xa;- شناسه_رزرو: رشته&#xa;- شناسه_استاد: رشته&#xa;- منطقه_سایت: رشته&#xa;- تاریخ: تاریخ&#xa;- زمان_شروع: زمان&#xa;- زمان_پایان: زمان&#xa;- هدف: رشته&#xa;- وضعیت: وضعیت_رزرو&#xa;&#xa;+ ایجاد(): بولین&#xa;+ لغو(): خالی&#xa;+ تایید(): خالی&#xa;+ رد(دلیل): خالی" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+                    <mxGeometry x="300" y="680" width="260" height="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="186" value="" style="endArrow=none;html=1;" edge="1" parent="130">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint y="154" as="sourcePoint"/>
+                        <mxPoint x="260" y="154" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="131" value="اعلان&#xa;&#xa;- شناسه_اعلان: رشته&#xa;- عنوان: رشته&#xa;- محتوا: رشته&#xa;- ایجادشده_توسط: رشته&#xa;- تاریخ_ایجاد: تاریخ_زمان&#xa;- مخاطبان: لیست&lt;نقش&gt;&#xa;- اولویت: اولویت&#xa;&#xa;+ ایجاد(): بولین&#xa;+ ویرایش(): خالی&#xa;+ حذف(): بولین&#xa;+ ارسال_اطلاع_رسانی(): خالی" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="680" width="240" height="210" as="geometry"/>
+                </mxCell>
+                <mxCell id="187" value="" style="endArrow=none;html=1;" edge="1" parent="131">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint y="140" as="sourcePoint"/>
+                        <mxPoint x="240" y="140" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="132" value="نقش_کاربری&#xa;&#xa;- شناسه_نقش: رشته&#xa;- نام_نقش: رشته&#xa;- مجوزها: لیست&lt;مجوز&gt;&#xa;&#xa;+ افزودن_مجوز(مجوز): خالی&#xa;+ حذف_مجوز(مجوز): خالی&#xa;+ دارای_مجوز(مجوز): بولین" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+                    <mxGeometry x="340" y="80" width="260" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="133" value="لاگ&#xa;&#xa;- شناسه_لاگ: رشته&#xa;- شناسه_کاربر: رشته&#xa;- عملیات: رشته&#xa;- زمان: تاریخ_زمان&#xa;- آدرس_آی_پی: رشته&#xa;- جزئیات: رشته&#xa;&#xa;+ ثبت(): خالی&#xa;+ جست‌وجو(معیار): لیست&lt;لاگ&gt;&#xa;+ خروجی(فرمت): فایل" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+                    <mxGeometry x="1000" y="680" width="240" height="190" as="geometry"/>
+                </mxCell>
+                <mxCell id="189" value="" style="endArrow=none;html=1;" edge="1" parent="133">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint y="126" as="sourcePoint"/>
+                        <mxPoint x="240" y="126" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="134" value="&lt;&lt;شمارش&gt;&gt;&#xa;وضعیت_میز&#xa;&#xa;آزاد&#xa;اشغال&#xa;رزروشده&#xa;در_حال_تعمیر&#xa;خارج_از_سرویس" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+                    <mxGeometry x="1320" y="340" width="180" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="135" value="&lt;&lt;شمارش&gt;&gt;&#xa;وضعیت_گزارش&#xa;&#xa;در_انتظار&#xa;در_حال_انجام&#xa;حل_شده&#xa;بسته_شده" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+                    <mxGeometry x="1320" y="540" width="180" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="136" value="&lt;&lt;شمارش&gt;&gt;&#xa;وضعیت_رزرو&#xa;&#xa;در_انتظار&#xa;تایید_شده&#xa;رد_شده&#xa;لغو_شده" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+                    <mxGeometry x="1320" y="720" width="180" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="137" value="" style="endArrow=block;endSize=16;endFill=0;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="123" target="122">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="400" y="400" as="sourcePoint"/>
+                        <mxPoint x="560" y="400" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="138" value="" style="endArrow=block;endSize=16;endFill=0;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="124" target="122">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="400" y="400" as="sourcePoint"/>
+                        <mxPoint x="560" y="400" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="139" value="" style="endArrow=block;endSize=16;endFill=0;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="125" target="122">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="400" y="400" as="sourcePoint"/>
+                        <mxPoint x="560" y="400" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="140" value="دارد" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="122" target="132">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="400" as="sourcePoint"/>
+                        <mxPoint x="450" y="350" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="141" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="265" y="115" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="142" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="305" y="135" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="143" value="ایجاد می‌کند" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="122" target="127">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="400" as="sourcePoint"/>
+                        <mxPoint x="450" y="350" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="144" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="265" y="205" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="145" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="965" y="370" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="146" value="میزبانی می‌کند" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="126" target="127">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="400" as="sourcePoint"/>
+                        <mxPoint x="450" y="350" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="147" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="1135" y="285" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="148" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="1135" y="310" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="149" value="نصب شده است" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="126" target="129">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="400" as="sourcePoint"/>
+                        <mxPoint x="450" y="350" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="150" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="1265" y="155" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="151" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="1285" y="155" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="152" value="" style="endArrow=open;html=1;rounded=0;dashed=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="126" target="134">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="400" as="sourcePoint"/>
+                        <mxPoint x="450" y="350" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="153" value="گزارش می‌دهد" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="123" target="128">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="600" as="sourcePoint"/>
+                        <mxPoint x="450" y="550" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="154" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="160" y="495" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="155" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="605" y="715" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="156" value="گزارش می‌دهد" style="endArrow=none;html=1;rounded=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="124" target="128">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="600" as="sourcePoint"/>
+                        <mxPoint x="450" y="550" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="157" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="515" y="505" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="158" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="710" y="655" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="159" value="دارد" style="endArrow=none;html=1;rounded=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="127" target="128">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="600" as="sourcePoint"/>
+                        <mxPoint x="450" y="550" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="160" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="1065" y="535" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="161" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="925" y="715" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="162" value="" style="endArrow=open;html=1;rounded=0;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="128" target="135">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="600" as="sourcePoint"/>
+                        <mxPoint x="450" y="550" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="163" value="ایجاد می‌کند" style="endArrow=none;html=1;rounded=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="124" target="130">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="600" as="sourcePoint"/>
+                        <mxPoint x="450" y="550" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="164" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="385" y="505" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="165" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="430" y="655" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="166" value="تایید می‌کند" style="endArrow=none;html=1;rounded=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="125" target="130">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="600" as="sourcePoint"/>
+                        <mxPoint x="450" y="550" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="167" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="710" y="585" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="168" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="565" y="730" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="169" value="" style="endArrow=open;html=1;rounded=0;dashed=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="130" target="136">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="800" as="sourcePoint"/>
+                        <mxPoint x="450" y="750" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="170" value="مدیریت می‌کند" style="endArrow=none;html=1;rounded=0;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="125" target="131">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="600" as="sourcePoint"/>
+                        <mxPoint x="450" y="550" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="171" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="605" y="510" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="172" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="285" y="715" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="173" value="مشاهده می‌کند" style="endArrow=none;html=1;rounded=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="122" target="131">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="400" as="sourcePoint"/>
+                        <mxPoint x="450" y="350" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="174" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="95" y="265" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="175" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="95" y="655" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="176" value="تولید می‌کند" style="endArrow=none;html=1;rounded=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="122" target="133">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="400" as="sourcePoint"/>
+                        <mxPoint x="450" y="350" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="177" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="205" y="265" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="178" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="965" y="725" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="179" value="مشاهده می‌کند" style="endArrow=none;html=1;rounded=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="125" target="133">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="600" as="sourcePoint"/>
+                        <mxPoint x="450" y="550" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="180" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="850" y="585" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="181" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="1125" y="655" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="182" value="" style="endArrow=none;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="40" y="177" as="sourcePoint"/>
+                        <mxPoint x="260" y="177" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

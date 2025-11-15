@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="Electron" agent="Mozilla/5.0" version="26.2.2">
+  <diagram name="Class Diagram" id="class-diagram">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- کلاس کاربر -->
+        <mxCell id="class-user" value="کاربر&#xa;&#xa;- شناسه_کاربری: رشته&#xa;- رمزعبور: رشته&#xa;- نقش: نقش_کاربری&#xa;- فعال: بولین&#xa;&#xa;+ ورود(): بولین&#xa;+ خروج(): خالی&#xa;+ بروزرسانی_پروفایل(): خالی" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+          <mxGeometry x="40" y="80" width="220" height="180" as="geometry" />
+        </mxCell>
+        
+        <!-- کلاس دانشجو -->
+        <mxCell id="class-student" value="دانشجو&#xa;&#xa;- شماره_دانشجویی: رشته&#xa;- نام: رشته&#xa;- دانشکده: رشته&#xa;&#xa;+ مشاهده_اعلان‌ها(): لیست&lt;اعلان&gt;&#xa;+ ثبت_گزارش_خرابی(): خالی" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+          <mxGeometry x="40" y="340" width="240" height="150" as="geometry" />
+        </mxCell>
+        
+        <!-- کلاس استاد -->
+        <mxCell id="class-professor" value="استاد&#xa;&#xa;- شناسه_کارمندی: رشته&#xa;- نام: رشته&#xa;- بخش: رشته&#xa;&#xa;+ رزرو_سایت(تاریخ، زمان): رزرو&#xa;+ ثبت_گزارش_خرابی(): خالی&#xa;+ مشاهده_اعلان‌ها(): لیست&lt;اعلان&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+          <mxGeometry x="320" y="340" width="260" height="160" as="geometry" />
+        </mxCell>
+        
+        <!-- کلاس ادمین -->
+        <mxCell id="class-admin" value="ادمین&#xa;&#xa;- شناسه_ادمین: رشته&#xa;- نام: رشته&#xa;- سطح_دسترسی: عدد&#xa;&#xa;+ مشاهده_وضعیت_میزها(): لیست&lt;میز&gt;&#xa;+ مدیریت_گزارش_خرابی(): خالی&#xa;+ مدیریت_نرم‌افزارها(): خالی&#xa;+ جست‌وجوی_پیشرفته(): لیست&#xa;+ مدیریت_کاربران_و_نقش‌ها(): خالی&#xa;+ تایید_رزرو(شناسه): بولین&#xa;+ خروجی_داده(فرمت): فایل&#xa;+ مدیریت_اعلان‌ها(): خالی&#xa;+ مشاهده_لاگ‌ها(): لیست&lt;لاگ&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+          <mxGeometry x="640" y="340" width="280" height="240" as="geometry" />
+        </mxCell>
+        
+        <!-- کلاس میز -->
+        <mxCell id="class-table" value="میز&#xa;&#xa;- شناسه_میز: رشته&#xa;- نوع: رشته&#xa;- وضعیت: وضعیت_میز&#xa;- مکان: رشته&#xa;- تاریخ_آخرین_تعمیر: تاریخ&#xa;&#xa;+ اختصاص_به_کاربر(شناسه): بولین&#xa;+ آزادسازی_میز(): خالی&#xa;+ بروزرسانی_وضعیت(وضعیت): خالی&#xa;+ بررسی_در_دسترس_بودن(): بولین" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+          <mxGeometry x="1000" y="80" width="260" height="200" as="geometry" />
+        </mxCell>
+        
+        <!-- کلاس جلسه استفاده -->
+        <mxCell id="class-session" value="جلسه_استفاده&#xa;&#xa;- شناسه_جلسه: رشته&#xa;- شناسه_کاربر: رشته&#xa;- شناسه_میز: رشته&#xa;- زمان_ورود: تاریخ_زمان&#xa;- زمان_خروج: تاریخ_زمان&#xa;- مدت_زمان: عدد&#xa;&#xa;+ ثبت_ورود(): خالی&#xa;+ ثبت_خروج(): خالی&#xa;+ محاسبه_مدت_زمان(): عدد" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+          <mxGeometry x="1000" y="340" width="260" height="190" as="geometry" />
+        </mxCell>
+        
+        <!-- کلاس گزارش خرابی -->
+        <mxCell id="class-malfunction" value="گزارش_خرابی&#xa;&#xa;- شناسه_گزارش: رشته&#xa;- شناسه_میز: رشته&#xa;- شناسه_گزارش_دهنده: رشته&#xa;- شرح: رشته&#xa;- تاریخ_گزارش: تاریخ_زمان&#xa;- وضعیت: وضعیت_گزارش&#xa;- اولویت: اولویت&#xa;&#xa;+ ارسال(): بولین&#xa;+ بروزرسانی_وضعیت(وضعیت): خالی&#xa;+ اختصاص_به_تکنسین(شناسه): خالی" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+          <mxGeometry x="640" y="680" width="280" height="200" as="geometry" />
+        </mxCell>
+        
+        <!-- کلاس نرم‌افزار -->
+        <mxCell id="class-software" value="نرم‌افزار&#xa;&#xa;- شناسه_نرم‌افزار: رشته&#xa;- نام: رشته&#xa;- نسخه: رشته&#xa;- کلید_لایسنس: رشته&#xa;- تاریخ_نصب: تاریخ&#xa;&#xa;+ نصب(): بولین&#xa;+ بروزرسانی(نسخه): خالی&#xa;+ حذف(): بولین" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+          <mxGeometry x="1320" y="80" width="240" height="180" as="geometry" />
+        </mxCell>
+        
+        <!-- کلاس رزرو -->
+        <mxCell id="class-reservation" value="رزرو&#xa;&#xa;- شناسه_رزرو: رشته&#xa;- شناسه_استاد: رشته&#xa;- منطقه_سایت: رشته&#xa;- تاریخ: تاریخ&#xa;- زمان_شروع: زمان&#xa;- زمان_پایان: زمان&#xa;- هدف: رشته&#xa;- وضعیت: وضعیت_رزرو&#xa;&#xa;+ ایجاد(): بولین&#xa;+ لغو(): خالی&#xa;+ تایید(): خالی&#xa;+ رد(دلیل): خالی" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+          <mxGeometry x="300" y="680" width="260" height="220" as="geometry" />
+        </mxCell>
+        
+        <!-- کلاس اعلان -->
+        <mxCell id="class-announcement" value="اعلان&#xa;&#xa;- شناسه_اعلان: رشته&#xa;- عنوان: رشته&#xa;- محتوا: رشته&#xa;- ایجادشده_توسط: رشته&#xa;- تاریخ_ایجاد: تاریخ_زمان&#xa;- مخاطبان: لیست&lt;نقش&gt;&#xa;- اولویت: اولویت&#xa;&#xa;+ ایجاد(): بولین&#xa;+ ویرایش(): خالی&#xa;+ حذف(): بولین&#xa;+ ارسال_اطلاع_رسانی(): خالی" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+          <mxGeometry x="40" y="680" width="240" height="210" as="geometry" />
+        </mxCell>
+        
+        <!-- کلاس نقش -->
+        <mxCell id="class-role" value="نقش_کاربری&#xa;&#xa;- شناسه_نقش: رشته&#xa;- نام_نقش: رشته&#xa;- مجوزها: لیست&lt;مجوز&gt;&#xa;&#xa;+ افزودن_مجوز(مجوز): خالی&#xa;+ حذف_مجوز(مجوز): خالی&#xa;+ دارای_مجوز(مجوز): بولین" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+          <mxGeometry x="340" y="80" width="260" height="150" as="geometry" />
+        </mxCell>
+        
+        <!-- کلاس لاگ -->
+        <mxCell id="class-log" value="لاگ&#xa;&#xa;- شناسه_لاگ: رشته&#xa;- شناسه_کاربر: رشته&#xa;- عملیات: رشته&#xa;- زمان: تاریخ_زمان&#xa;- آدرس_آی_پی: رشته&#xa;- جزئیات: رشته&#xa;&#xa;+ ثبت(): خالی&#xa;+ جست‌وجو(معیار): لیست&lt;لاگ&gt;&#xa;+ خروجی(فرمت): فایل" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+          <mxGeometry x="1000" y="680" width="240" height="190" as="geometry" />
+        </mxCell>
+        
+        <!-- کلاس Enum وضعیت میز -->
+        <mxCell id="enum-tablestatus" value="&lt;&lt;شمارش&gt;&gt;&#xa;وضعیت_میز&#xa;&#xa;آزاد&#xa;اشغال&#xa;رزروشده&#xa;در_حال_تعمیر&#xa;خارج_از_سرویس" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+          <mxGeometry x="1320" y="340" width="180" height="140" as="geometry" />
+        </mxCell>
+        
+        <!-- کلاس Enum وضعیت گزارش -->
+        <mxCell id="enum-reportstatus" value="&lt;&lt;شمارش&gt;&gt;&#xa;وضعیت_گزارش&#xa;&#xa;در_انتظار&#xa;در_حال_انجام&#xa;حل_شده&#xa;بسته_شده" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+          <mxGeometry x="1320" y="540" width="180" height="120" as="geometry" />
+        </mxCell>
+        
+        <!-- کلاس Enum وضعیت رزرو -->
+        <mxCell id="enum-reservationstatus" value="&lt;&lt;شمارش&gt;&gt;&#xa;وضعیت_رزرو&#xa;&#xa;در_انتظار&#xa;تایید_شده&#xa;رد_شده&#xa;لغو_شده" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+          <mxGeometry x="1320" y="720" width="180" height="120" as="geometry" />
+        </mxCell>
+        
+        <!-- ارتباطات (Relationships) -->
+        
+        <!-- کاربر به دانشجو - تعمیم -->
+        <mxCell id="rel-user-student" value="" style="endArrow=block;endSize=16;endFill=0;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" parent="1" source="class-student" target="class-user" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="400" y="400" as="sourcePoint" />
+            <mxPoint x="560" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- کاربر به استاد - تعمیم -->
+        <mxCell id="rel-user-professor" value="" style="endArrow=block;endSize=16;endFill=0;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="class-professor" target="class-user" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="400" y="400" as="sourcePoint" />
+            <mxPoint x="560" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- کاربر به ادمین - تعمیم -->
+        <mxCell id="rel-user-admin" value="" style="endArrow=block;endSize=16;endFill=0;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" parent="1" source="class-admin" target="class-user" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="400" y="400" as="sourcePoint" />
+            <mxPoint x="560" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- کاربر به نقش - انجمن -->
+        <mxCell id="rel-user-role" value="دارد" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="class-user" target="class-role" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="400" as="sourcePoint" />
+            <mxPoint x="450" y="350" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-user-role-label1" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="265" y="115" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-user-role-label2" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="305" y="135" width="30" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- کاربر به جلسه - انجمن -->
+        <mxCell id="rel-user-session" value="ایجاد می‌کند" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" parent="1" source="class-user" target="class-session" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="400" as="sourcePoint" />
+            <mxPoint x="450" y="350" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-user-session-label1" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="265" y="205" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-user-session-label2" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="965" y="370" width="30" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- میز به جلسه - انجمن -->
+        <mxCell id="rel-table-session" value="میزبانی می‌کند" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="class-table" target="class-session" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="400" as="sourcePoint" />
+            <mxPoint x="450" y="350" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-table-session-label1" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="1135" y="285" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-table-session-label2" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="1135" y="310" width="30" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- میز به نرم‌افزار - انجمن -->
+        <mxCell id="rel-table-software" value="نصب شده است" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="class-table" target="class-software" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="400" as="sourcePoint" />
+            <mxPoint x="450" y="350" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-table-software-label1" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="1265" y="155" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-table-software-label2" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="1285" y="155" width="30" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- میز به وضعیت میز - وابستگی -->
+        <mxCell id="rel-table-status" value="" style="endArrow=open;html=1;rounded=0;dashed=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="class-table" target="enum-tablestatus" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="400" as="sourcePoint" />
+            <mxPoint x="450" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- دانشجو به گزارش خرابی - انجمن -->
+        <mxCell id="rel-student-malfunction" value="گزارش می‌دهد" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" parent="1" source="class-student" target="class-malfunction" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="600" as="sourcePoint" />
+            <mxPoint x="450" y="550" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-student-malfunction-label1" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="160" y="495" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-student-malfunction-label2" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="605" y="715" width="30" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- استاد به گزارش خرابی - انجمن -->
+        <mxCell id="rel-professor-malfunction" value="گزارش می‌دهد" style="endArrow=none;html=1;rounded=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" parent="1" source="class-professor" target="class-malfunction" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="600" as="sourcePoint" />
+            <mxPoint x="450" y="550" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-professor-malfunction-label1" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="515" y="505" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-professor-malfunction-label2" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="710" y="655" width="30" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- جلسه به گزارش خرابی - انجمن -->
+        <mxCell id="rel-session-malfunction" value="دارد" style="endArrow=none;html=1;rounded=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" parent="1" source="class-session" target="class-malfunction" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="600" as="sourcePoint" />
+            <mxPoint x="450" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-session-malfunction-label1" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="1065" y="535" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-session-malfunction-label2" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="925" y="715" width="30" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- گزارش خرابی به وضعیت گزارش - وابستگی -->
+        <mxCell id="rel-malfunction-status" value="" style="endArrow=open;html=1;rounded=0;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="class-malfunction" target="enum-reportstatus" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="600" as="sourcePoint" />
+            <mxPoint x="450" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- استاد به رزرو - انجمن -->
+        <mxCell id="rel-professor-reservation" value="ایجاد می‌کند" style="endArrow=none;html=1;rounded=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="class-professor" target="class-reservation" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="600" as="sourcePoint" />
+            <mxPoint x="450" y="550" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-professor-reservation-label1" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="385" y="505" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-professor-reservation-label2" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="430" y="655" width="30" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- ادمین به رزرو - انجمن -->
+        <mxCell id="rel-admin-reservation" value="تایید می‌کند" style="endArrow=none;html=1;rounded=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" parent="1" source="class-admin" target="class-reservation" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="600" as="sourcePoint" />
+            <mxPoint x="450" y="550" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-admin-reservation-label1" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="710" y="585" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-admin-reservation-label2" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="565" y="730" width="30" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- رزرو به وضعیت رزرو - وابستگی -->
+        <mxCell id="rel-reservation-status" value="" style="endArrow=open;html=1;rounded=0;dashed=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="class-reservation" target="enum-reservationstatus" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="800" as="sourcePoint" />
+            <mxPoint x="450" y="750" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- ادمین به اعلان - انجمن -->
+        <mxCell id="rel-admin-announcement" value="مدیریت می‌کند" style="endArrow=none;html=1;rounded=0;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" parent="1" source="class-admin" target="class-announcement" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="600" as="sourcePoint" />
+            <mxPoint x="450" y="550" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-admin-announcement-label1" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="605" y="510" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-admin-announcement-label2" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="285" y="715" width="30" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- کاربر به اعلان - انجمن (مشاهده) -->
+        <mxCell id="rel-user-announcement" value="مشاهده می‌کند" style="endArrow=none;html=1;rounded=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" parent="1" source="class-user" target="class-announcement" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="400" as="sourcePoint" />
+            <mxPoint x="450" y="350" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-user-announcement-label1" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="95" y="265" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-user-announcement-label2" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="95" y="655" width="30" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- کاربر به لاگ - انجمن -->
+        <mxCell id="rel-user-log" value="تولید می‌کند" style="endArrow=none;html=1;rounded=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" parent="1" source="class-user" target="class-log" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="400" as="sourcePoint" />
+            <mxPoint x="450" y="350" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-user-log-label1" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="205" y="265" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-user-log-label2" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="965" y="725" width="30" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- ادمین به لاگ - انجمن (مشاهده) -->
+        <mxCell id="rel-admin-log" value="مشاهده می‌کند" style="endArrow=none;html=1;rounded=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="class-admin" target="class-log" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="600" as="sourcePoint" />
+            <mxPoint x="450" y="550" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-admin-log-label1" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="850" y="585" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-admin-log-label2" value="*" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="1125" y="655" width="30" height="30" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
