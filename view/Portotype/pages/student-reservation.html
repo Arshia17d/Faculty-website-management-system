@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رزرو میز - دانشجو</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- نوار کناری -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="user-info">
+                    <i class="fas fa-user-graduate fa-2x"></i>
+                    <div class="user-details">
+                        <h3 id="userName">علی محمدی</h3>
+                        <p>دانشجو</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- منو توسط JavaScript پر می‌شود -->
+            <div id="sidebarMenu"></div>
+        </aside>
+
+        <!-- محتوای اصلی -->
+        <main class="main-content">
+            <div class="content-header">
+                <h2><i class="fas fa-calendar-plus"></i> رزرو میز کامپیوتر</h2>
+                <a href="student-dashboard.html" class="btn btn-outline">
+                    <i class="fas fa-arrow-right"></i> بازگشت به داشبورد
+                </a>
+            </div>
+
+            <!-- فرم رزرو -->
+            <div class="form-container">
+                <form id="reservationForm">
+                    <div class="form-group">
+                        <label for="site">انتخاب سایت کامپیوتری</label>
+                        <select id="site" class="form-control" required>
+                            <option value="">لطفاً یک سایت انتخاب کنید</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="date">تاریخ</label>
+                            <input type="date" id="date" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="startTime">زمان شروع</label>
+                            <select id="startTime" class="form-control" required>
+                                <option value="">انتخاب کنید</option>
+                                <option value="08:00">۸:۰۰ صبح</option>
+                                <option value="09:00">۹:۰۰ صبح</option>
+                                <option value="10:00">۱۰:۰۰ صبح</option>
+                                <option value="11:00">۱۱:۰۰ صبح</option>
+                                <option value="12:00">۱۲:۰۰ ظهر</option>
+                                <option value="13:00">۱:۰۰ بعدازظهر</option>
+                                <option value="14:00">۲:۰۰ بعدازظهر</option>
+                                <option value="15:00">۳:۰۰ بعدازظهر</option>
+                                <option value="16:00">۴:۰۰ بعدازظهر</option>
+                                <option value="17:00">۵:۰۰ بعدازظهر</option>
+                                <option value="18:00">۶:۰۰ عصر</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="duration">مدت زمان (ساعت)</label>
+                            <select id="duration" class="form-control" required>
+                                <option value="1">۱ ساعت</option>
+                                <option value="2" selected>۲ ساعت</option>
+                                <option value="3">۳ ساعت</option>
+                                <option value="4">۴ ساعت</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="requiredSoftware">نرم‌افزارهای مورد نیاز</label>
+                        <select id="software" class="form-control" multiple style="height: 120px;">
+                            <option value="1">Python</option>
+                            <option value="2">MATLAB</option>
+                            <option value="3">VS Code</option>
+                            <option value="4">Office</option>
+                            <option value="5">Java</option>
+                            <option value="6">IntelliJ</option>
+                            <option value="7">Docker</option>
+                            <option value="8">PostgreSQL</option>
+                        </select>
+                        <small class="form-text text-muted">برای انتخاب چندگانه کلید Ctrl را نگه دارید</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="purpose">هدف از رزرو (اختیاری)</label>
+                        <input type="text" id="purpose" class="form-control"
+                            placeholder="مثال: انجام پروژه، مطالعه و ...">
+                    </div>
+
+                    <div class="form-group" style="margin-top: 30px;">
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">
+                            <i class="fas fa-paper-plane"></i> ثبت درخواست رزرو
+                        </button>
+                    </div>
+
+                    <div class="alert alert-info"
+                        style="background-color: #e8f4fc; padding: 15px; border-radius: 5px; margin-top: 20px;">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>توجه:</strong>
+                        <ul style="margin-top: 10px; padding-right: 20px;">
+                            <li>رزرو میز پس از ثبت، نیاز به تایید ادمین سیستم دارد.</li>
+                            <li>حداکثر مدت زمان رزرو برای دانشجویان ۴ ساعت است.</li>
+                            <li>در صورت عدم حضور در زمان رزرو شده، امکان رزرو برای شما محدود خواهد شد.</li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <!-- وضعیت میزها (فقط مشاهده - بدون دکمه مدیریت) -->
+            <div class="table-container" style="margin-top: 40px;">
+                <div class="table-header">
+                    <h3><i class="fas fa-desktop"></i> وضعیت کنونی سایت‌ها</h3>
+                </div>
+                <div style="padding: 20px;">
+                    <div class="sites-grid" id="sitesContainer">
+                        <!-- سایت‌ها توسط JavaScript پر می‌شود -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/app.js"></script>
+    <script>
+        // بارگذاری سایت‌ها برای نمایش وضعیت (بدون دکمه مدیریت)
+        document.addEventListener('DOMContentLoaded', function () {
+            // بارگذاری منو
+            if (window.userManager && window.userManager.generateSidebarMenu) {
+                document.getElementById('sidebarMenu').innerHTML = window.userManager.generateSidebarMenu();
+
+                // فعال کردن دکمه خروج
+                const logoutBtn = document.getElementById('logoutBtn');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        window.userManager.logout();
+                        window.NotificationManager.show('خروج با موفقیت انجام شد');
+                        setTimeout(() => {
+                            window.location.href = '../index.html';
+                        }, 1000);
+                    });
+                }
+            }
+
+            // بارگذاری سایت‌ها با حذف دکمه مدیریت
+            setTimeout(() => {
+                if (window.DashboardManager && window.DashboardManager.loadStudentSites) {
+                    window.DashboardManager.loadStudentSites();
+                }
+            }, 100);
+        });
+    </script>
+</body>
+
+</html>

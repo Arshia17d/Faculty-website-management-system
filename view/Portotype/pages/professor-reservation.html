@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رزرو سایت - استاد</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- نوار کناری -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="user-info">
+                    <i class="fas fa-chalkboard-teacher fa-2x"></i>
+                    <div class="user-details">
+                        <h3 id="userName">دکتر رضایی</h3>
+                        <p>استاد</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="professor-dashboard.html"><i class="fas fa-home"></i> داشبورد</a></li>
+                    <li><a href="professor-reservation.html" class="active"><i class="fas fa-calendar-plus"></i> رزرو
+                            سایت</a></li>
+                    <li><a href="malfunction-report.html"><i class="fas fa-exclamation-triangle"></i> گزارش خرابی</a>
+                    </li>
+                    <li><a href="announcements.html"><i class="fas fa-bell"></i> اعلان‌ها</a></li>
+                    <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> خروج</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- محتوای اصلی -->
+        <main class="main-content">
+            <div class="content-header">
+                <h2><i class="fas fa-calendar-plus"></i> رزرو سایت برای کلاس</h2>
+                <a href="professor-dashboard.html" class="btn btn-outline">
+                    <i class="fas fa-arrow-right"></i> بازگشت به داشبورد
+                </a>
+            </div>
+
+            <!-- فرم رزرو -->
+            <div class="form-container">
+                <form id="reservationForm">
+                    <div class="form-group">
+                        <label for="site">انتخاب سایت کامپیوتری</label>
+                        <select id="site" class="form-control" required>
+                            <option value="">لطفاً یک سایت انتخاب کنید</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="date">تاریخ</label>
+                            <input type="date" id="date" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="startTime">زمان شروع</label>
+                            <select id="startTime" class="form-control" required>
+                                <option value="">انتخاب کنید</option>
+                                <option value="08:00">۸:۰۰ صبح</option>
+                                <option value="10:00">۱۰:۰۰ صبح</option>
+                                <option value="12:00">۱۲:۰۰ ظهر</option>
+                                <option value="14:00">۲:۰۰ بعدازظهر</option>
+                                <option value="16:00">۴:۰۰ بعدازظهر</option>
+                                <option value="18:00">۶:۰۰ عصر</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="endTime">زمان پایان</label>
+                            <select id="endTime" class="form-control" required>
+                                <option value="">انتخاب کنید</option>
+                                <option value="10:00">۱۰:۰۰ صبح</option>
+                                <option value="12:00">۱۲:۰۰ ظهر</option>
+                                <option value="14:00">۲:۰۰ بعدازظهر</option>
+                                <option value="16:00">۴:۰۰ بعدازظهر</option>
+                                <option value="18:00">۶:۰۰ عصر</option>
+                                <option value="20:00">۸:۰۰ شب</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="purpose">هدف از رزرو (نام درس)</label>
+                        <input type="text" id="purpose" class="form-control" placeholder="مثال: مبانی برنامه‌نویسی"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="studentsCount">تعداد دانشجویان</label>
+                        <input type="number" id="studentsCount" class="form-control" min="1" max="50" value="25"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="requiredSoftware">نرم‌افزارهای مورد نیاز</label>
+                        <select id="software" class="form-control" multiple style="height: 120px;">
+                            <option value="1">Python</option>
+                            <option value="2">MATLAB</option>
+                            <option value="3">VS Code</option>
+                            <option value="4">Office</option>
+                            <option value="5">Java</option>
+                            <option value="6">IntelliJ</option>
+                        </select>
+                        <small class="form-text text-muted">برای انتخاب چندگانه کلید Ctrl را نگه دارید</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes">توضیحات اضافی (اختیاری)</label>
+                        <textarea id="notes" class="form-control" rows="3"
+                            placeholder="توضیحات اضافی درباره نیازمندی‌های کلاس..."></textarea>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 30px;">
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">
+                            <i class="fas fa-paper-plane"></i> ثبت درخواست رزرو
+                        </button>
+                    </div>
+
+                    <div class="alert alert-info"
+                        style="background-color: #e8f4fc; padding: 15px; border-radius: 5px; margin-top: 20px;">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>توجه:</strong> رزرو سایت پس از ثبت، نیاز به تایید ادمین سیستم دارد. پس از تایید، از طریق
+                        اعلان‌ها مطلع خواهید شد.
+                    </div>
+                </form>
+            </div>
+
+            <!-- رزروهای قبلی -->
+            <div class="table-container" style="margin-top: 40px;">
+                <div class="table-header">
+                    <h3><i class="fas fa-history"></i> رزروهای قبلی شما</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>سایت</th>
+                            <th>تاریخ</th>
+                            <th>زمان</th>
+                            <th>هدف</th>
+                            <th>وضعیت</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>سایت کامپیوتر دانشکده فنی</td>
+                            <td>1403/01/15</td>
+                            <td>۱۰:۰۰ - ۱۲:۰۰</td>
+                            <td>کلاس ساختمان داده</td>
+                            <td><span class="status-badge status-approved">تایید شده</span></td>
+                        </tr>
+                        <tr>
+                            <td>آزمایشگاه مهندسی نرم‌افزار</td>
+                            <td>1403/01/18</td>
+                            <td>۱۴:۰۰ - ۱۶:۰۰</td>
+                            <td>کارگاه برنامه‌نویسی</td>
+                            <td><span class="status-badge status-rejected">رد شده</span></td>
+                        </tr>
+                        <tr>
+                            <td>مرکز کامپیوتر کتابخانه</td>
+                            <td>1403/01/20</td>
+                            <td>۰۸:۰۰ - ۱۰:۰۰</td>
+                            <td>جلسه پژوهشی</td>
+                            <td><span class="status-badge status-approved">تایید شده</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/app.js"></script>
+</body>
+
+</html>

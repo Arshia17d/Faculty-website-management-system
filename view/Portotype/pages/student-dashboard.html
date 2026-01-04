@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>داشبورد دانشجو - سیستم مدیریت سایت‌ها</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- نوار کناری -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="user-info">
+                    <i class="fas fa-user-graduate fa-2x"></i>
+                    <div class="user-details">
+                        <h3 id="userName">علی محمدی</h3>
+                        <p id="userRole">دانشجو</p>
+                    </div>
+                </div>
+                <div id="userInfo" style="margin-top: 15px; font-size: 0.9rem;">
+                    <p><strong>شماره دانشجویی:</strong> 98123456</p>
+                    <p><strong>دانشکده:</strong> مهندسی کامپیوتر</p>
+                </div>
+            </div>
+
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="student-dashboard.html" class="active"><i class="fas fa-home"></i> داشبورد</a></li>
+                    <li><a href="student-reservation.html"><i class="fas fa-calendar-plus"></i> رزرو میز</a></li>
+                    <li><a href="malfunction-report.html"><i class="fas fa-exclamation-triangle"></i> گزارش خرابی</a>
+                    </li>
+                    <li><a href="announcements.html"><i class="fas fa-bell"></i> اعلان‌ها</a></li>
+                    <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> خروج</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- محتوای اصلی -->
+        <main class="main-content">
+            <div class="content-header">
+                <h2><i class="fas fa-home"></i> داشبورد دانشجو</h2>
+                <div class="date-display" id="currentDate"></div>
+            </div>
+
+            <!-- کارت‌های آمار -->
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="activeReservations">0</h3>
+                        <p>رزروهای فعال</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="pendingReservations">0</h3>
+                        <p>رزروهای در انتظار</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>۴۲</h3>
+                        <p>ساعت استفاده شده</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>۲</h3>
+                        <p>گزارش خرابی</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- رزروهای اخیر -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-history"></i> رزروهای اخیر</h3>
+                    <a href="student-reservation.html" class="btn btn-primary">رزرو جدید</a>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>سایت</th>
+                            <th>تاریخ</th>
+                            <th>زمان</th>
+                            <th>وضعیت</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reservationsTableBody">
+                        <!-- داده‌ها توسط JavaScript پر می‌شود -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- راهنما -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-info-circle"></i> راهنمای استفاده</h3>
+                </div>
+                <div style="padding: 20px;">
+                    <ol style="padding-right: 20px;">
+                        <li style="margin-bottom: 10px;">برای رزرو میز کامپیوتر، از منوی کناری گزینه "رزرو میز" را
+                            انتخاب کنید.</li>
+                        <li style="margin-bottom: 10px;">می‌توانید سایت، تاریخ، زمان و نرم‌افزارهای مورد نیاز خود را
+                            انتخاب کنید.</li>
+                        <li style="margin-bottom: 10px;">در صورت بروز مشکل در سیستم‌ها، از طریق "گزارش خرابی" مشکل را
+                            اطلاع دهید.</li>
+                        <li style="margin-bottom: 10px;">اعلان‌های مهم سیستم را از بخش "اعلان‌ها" مشاهده کنید.</li>
+                        <li>رزروها پس از تایید ادمین فعال می‌شوند.</li>
+                    </ol>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/app.js"></script>
+    <script>
+        // نمایش تاریخ جاری
+        document.addEventListener('DOMContentLoaded', function () {
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const dateStr = now.toLocaleDateString('fa-IR', options);
+            document.getElementById('currentDate').textContent = dateStr;
+        });
+    </script>
+</body>
+
+</html>

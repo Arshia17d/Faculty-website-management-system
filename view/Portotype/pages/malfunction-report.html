@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>گزارش خرابی - سیستم مدیریت سایت‌ها</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- نوار کناری -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="user-info">
+                    <div class="user-details">
+                        <h3 id="userName">علی محمدی</h3>
+                        <p id="userRole">دانشجو</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="student-dashboard.html"><i class="fas fa-home"></i> داشبورد</a></li>
+                    <li><a href="student-reservation.html"><i class="fas fa-calendar-plus"></i> رزرو میز</a></li>
+                    <li><a href="malfunction-report.html" class="active"><i class="fas fa-exclamation-triangle"></i>
+                            گزارش خرابی</a></li>
+                    <li><a href="announcements.html"><i class="fas fa-bell"></i> اعلان‌ها</a></li>
+                    <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> خروج</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- محتوای اصلی -->
+        <main class="main-content">
+            <div class="content-header">
+                <h2><i class="fas fa-exclamation-triangle"></i> ثبت گزارش خرابی</h2>
+                <a href="student-dashboard.html" class="btn btn-outline">
+                    <i class="fas fa-arrow-right"></i> بازگشت به داشبورد
+                </a>
+            </div>
+
+            <!-- فرم گزارش خرابی -->
+            <div class="form-container">
+                <form id="malfunctionForm">
+                    <div class="form-group">
+                        <label for="site">سایت کامپیوتری</label>
+                        <select id="site" class="form-control" required>
+                            <option value="">لطفاً سایت را انتخاب کنید</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="desk">شماره میز (اختیاری)</label>
+                        <input type="text" id="desk" class="form-control" placeholder="مثال: A-12, B-05">
+                        <small class="form-text text-muted">در صورتی که میز خاصی مشکل دارد، شماره آن را وارد
+                            کنید</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="problemType">نوع مشکل</label>
+                        <select id="problemType" class="form-control" required>
+                            <option value="">انتخاب کنید</option>
+                            <option value="hardware">سخت‌افزاری (مانیتور، کیس، موس و ...)</option>
+                            <option value="software">نرم‌افزاری (برنامه اجرا نمی‌شود، خطا می‌دهد)</option>
+                            <option value="network">مشکل شبکه (اینترنت، اتصال شبکه)</option>
+                            <option value="power">مشکل برق (سیستم روشن نمی‌شود)</option>
+                            <option value="other">سایر مشکلات</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="priority">اولویت</label>
+                        <select id="priority" class="form-control" required>
+                            <option value="low">پایین (مشکل جزئی)</option>
+                            <option value="medium" selected>متوسط (مشکل قابل تحمل)</option>
+                            <option value="high">بالا (سیستم غیرقابل استفاده)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">شرح دقیق مشکل</label>
+                        <textarea id="description" class="form-control" rows="5"
+                            placeholder="مشکل را به طور دقیق شرح دهید. لطفاً مراحلی که منجر به بروز مشکل شده و پیام خطا (در صورت وجود) را بنویسید."
+                            required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>آیا این مشکل قبلاً هم اتفاق افتاده؟</label>
+                        <div style="margin-top: 10px;">
+                            <label style="margin-left: 20px;">
+                                <input type="radio" name="recurring" value="yes"> بله
+                            </label>
+                            <label style="margin-right: 20px;">
+                                <input type="radio" name="recurring" value="no" checked> خیر
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact">راه تماس با شما (اختیاری)</label>
+                        <input type="text" id="contact" class="form-control" placeholder="ایمیل یا شماره تماس">
+                        <small class="form-text text-muted">در صورت نیاز به اطلاعات بیشتر با شما تماس گرفته
+                            می‌شود</small>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 30px;">
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">
+                            <i class="fas fa-paper-plane"></i> ارسال گزارش خرابی
+                        </button>
+                    </div>
+
+                    <div class="alert alert-info"
+                        style="background-color: #e8f4fc; padding: 15px; border-radius: 5px; margin-top: 20px;">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>توجه:</strong> گزارش خرابی شما پس از ثبت، توسط تیم پشتیبانی بررسی خواهد شد. شما
+                        می‌توانید وضعیت گزارش خود را در داشبورد پیگیری کنید.
+                    </div>
+                </form>
+            </div>
+
+            <!-- راهنمای گزارش خرابی -->
+            <div class="table-container" style="margin-top: 40px;">
+                <div class="table-header">
+                    <h3><i class="fas fa-question-circle"></i> راهنمای ثبت گزارش خرابی</h3>
+                </div>
+                <div style="padding: 20px;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <div
+                                style="text-align: center; padding: 15px; background-color: #f8f9fa; border-radius: 8px;">
+                                <i class="fas fa-desktop fa-2x" style="color: #3498db; margin-bottom: 10px;"></i>
+                                <h4>مشکلات سخت‌افزاری</h4>
+                                <p style="font-size: 0.9rem; color: #666;">
+                                    مانیتور روشن نمی‌شود، صدا ندارد، سیستم هنگ می‌کند، موس یا کیبورد کار نمی‌کند
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div
+                                style="text-align: center; padding: 15px; background-color: #f8f9fa; border-radius: 8px;">
+                                <i class="fas fa-cogs fa-2x" style="color: #27ae60; margin-bottom: 10px;"></i>
+                                <h4>مشکلات نرم‌افزاری</h4>
+                                <p style="font-size: 0.9rem; color: #666;">
+                                    برنامه اجرا نمی‌شود، خطا می‌دهد، به روزرسانی نیاز دارد، حذف شده است
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div
+                                style="text-align: center; padding: 15px; background-color: #f8f9fa; border-radius: 8px;">
+                                <i class="fas fa-wifi fa-2x" style="color: #f39c12; margin-bottom: 10px;"></i>
+                                <h4>مشکلات شبکه</h4>
+                                <p style="font-size: 0.9rem; color: #666;">
+                                    اینترنت وصل نیست، سرعت پایین است، سایت‌های خاصی باز نمی‌شوند
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        style="margin-top: 20px; padding: 15px; background-color: #fef9e7; border-right: 4px solid #f39c12; border-radius: 5px;">
+                        <h5><i class="fas fa-lightbulb"></i> نکات مهم:</h5>
+                        <ul style="padding-right: 20px; margin-top: 10px;">
+                            <li>لطفاً مشکل را به طور دقیق و واضح شرح دهید.</li>
+                            <li>در صورت وجود پیام خطا، آن را عیناً در گزارش ذکر کنید.</li>
+                            <li>اگر میز خاصی مشکل دارد، حتماً شماره آن را بنویسید.</li>
+                            <li>گزارشات با اولویت بالا برای مشکلات جدی است (سیستم کاملاً غیرقابل استفاده).</li>
+                            <li>پس از ثبت گزارش، می‌توانید وضعیت آن را در داشبورد پیگیری کنید.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدیریت نرم‌افزار - ادمین</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- نوار کناری -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="user-info">
+                    <i class="fas fa-user-cog fa-2x"></i>
+                    <div class="user-details">
+                        <h3 id="userName">مدیر سیستم</h3>
+                        <p>ادمین</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="admin-dashboard.html"><i class="fas fa-home"></i> داشبورد</a></li>
+                    <li><a href="admin-reservations.html"><i class="fas fa-calendar-check"></i> مدیریت رزروها</a></li>
+                    <li><a href="admin-reports.html"><i class="fas fa-exclamation-triangle"></i> گزارشات خرابی</a></li>
+                    <li><a href="admin-software.html" class="active"><i class="fas fa-cogs"></i> مدیریت نرم‌افزار</a>
+                    </li>
+                    <li><a href="admin-users.html"><i class="fas fa-users"></i> مدیریت کاربران</a></li>
+                    <li><a href="announcements.html"><i class="fas fa-bell"></i> اعلان‌ها</a></li>
+                    <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> خروج</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- محتوای اصلی -->
+        <main class="main-content">
+            <div class="content-header">
+                <h2><i class="fas fa-cogs"></i> مدیریت نرم‌افزارها</h2>
+                <a href="admin-dashboard.html" class="btn btn-outline">
+                    <i class="fas fa-arrow-right"></i> بازگشت به داشبورد
+                </a>
+            </div>
+
+            <!-- تب‌های مدیریت -->
+            <div style="margin-bottom: 30px;">
+                <div style="border-bottom: 1px solid #ddd;">
+                    <button class="tab-btn active" data-tab="software-list">لیست نرم‌افزارها</button>
+                    <button class="tab-btn" data-tab="assign-software">تخصیص به میزها</button>
+                    <button class="tab-btn" data-tab="site-software">نرم‌افزارهای سایت</button>
+                </div>
+            </div>
+
+            <!-- تب ۱: لیست نرم‌افزارها -->
+            <div id="software-list" class="tab-content active">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3><i class="fas fa-boxes"></i> نرم‌افزارهای موجود</h3>
+                        <button class="btn btn-primary" onclick="showAddSoftwareModal()">
+                            <i class="fas fa-plus"></i> افزودن نرم‌افزار جدید
+                        </button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>نام نرم‌افزار</th>
+                                <th>نسخه</th>
+                                <th>کلید لایسنس</th>
+                                <th>تاریخ نصب</th>
+                                <th>تعداد میزهای نصب شده</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="softwareTableBody">
+                            <!-- داده‌ها توسط JavaScript پر می‌شود -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- تب ۲: تخصیص به میزها -->
+            <div id="assign-software" class="tab-content">
+                <div class="form-container">
+                    <h3><i class="fas fa-desktop"></i> تخصیص نرم‌افزار به میز</h3>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="selectSiteForDesk">انتخاب سایت</label>
+                            <select id="selectSiteForDesk" class="form-control">
+                                <option value="">لطفاً سایت را انتخاب کنید</option>
+                                <option value="1">سایت کامپیوتر دانشکده فنی</option>
+                                <option value="2">آزمایشگاه مهندسی نرم‌افزار</option>
+                                <option value="3">مرکز کامپیوتر کتابخانه مرکزی</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="selectDesk">انتخاب میز</label>
+                            <select id="selectDesk" class="form-control" disabled>
+                                <option value="">ابتدا سایت را انتخاب کنید</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>نرم‌افزارهای نصب شده روی این میز</label>
+                        <div id="currentSoftwareTags" class="software-tags"
+                            style="min-height: 50px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                            <span class="software-tag">Python 3.11 <i class="fas fa-times"
+                                    onclick="removeSoftware(this)"></i></span>
+                            <span class="software-tag">VS Code 1.78 <i class="fas fa-times"
+                                    onclick="removeSoftware(this)"></i></span>
+                            <span class="software-tag">Office 2021 <i class="fas fa-times"
+                                    onclick="removeSoftware(this)"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="addSoftwareToDesk">افزودن نرم‌افزار جدید</label>
+                        <div class="form-row">
+                            <div class="form-group" style="flex: 2;">
+                                <select id="addSoftwareToDesk" class="form-control">
+                                    <option value="">نرم‌افزار را انتخاب کنید</option>
+                                    <option value="1">Python 3.11</option>
+                                    <option value="2">MATLAB R2022b</option>
+                                    <option value="3">VS Code 1.78</option>
+                                    <option value="4">Office 2021</option>
+                                    <option value="5">Java JDK 17</option>
+                                    <option value="6">IntelliJ 2023.1</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <button class="btn btn-primary" style="width: 100%;" onclick="addSoftwareToDesk()">
+                                    <i class="fas fa-plus"></i> افزودن
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 30px;">
+                        <button class="btn btn-success" style="width: 100%; padding: 12px;">
+                            <i class="fas fa-save"></i> ذخیره تغییرات
+                        </button>
+                    </div>
+                </div>
+
+                <!-- لیست میزها و نرم‌افزارهایشان -->
+                <div class="table-container" style="margin-top: 40px;">
+                    <div class="table-header">
+                        <h3><i class="fas fa-list"></i> میزها و نرم‌افزارهای نصب شده</h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>سایت</th>
+                                <th>شماره میز</th>
+                                <th>وضعیت</th>
+                                <th>نرم‌افزارهای نصب شده</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>سایت دانشکده فنی</td>
+                                <td>A-12</td>
+                                <td><span class="status-badge status-free">آزاد</span></td>
+                                <td>
+                                    <span class="software-tag">Python</span>
+                                    <span class="software-tag">MATLAB</span>
+                                    <span class="software-tag">VS Code</span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-outline btn-sm">ویرایش</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>آزمایشگاه نرم‌افزار</td>
+                                <td>B-05</td>
+                                <td><span class="status-badge status-occupied">اشغال</span></td>
+                                <td>
+                                    <span class="software-tag">Java</span>
+                                    <span class="software-tag">IntelliJ</span>
+                                    <span class="software-tag">Docker</span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-outline btn-sm">ویرایش</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>مرکز کتابخانه</td>
+                                <td>C-08</td>
+                                <td><span class="status-badge status-under-repair">تعمیر</span></td>
+                                <td>
+                                    <span class="software-tag">Office</span>
+                                    <span class="software-tag">Python</span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-outline btn-sm">ویرایش</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- تب ۳: نرم‌افزارهای سایت -->
+            <div id="site-software" class="tab-content">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3><i class="fas fa-sitemap"></i> نرم‌افزارهای هر سایت</h3>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div class="sites-grid">
+                            <!-- سایت ۱ -->
+                            <div class="site-card">
+                                <div class="site-header">
+                                    <h3>سایت کامپیوتر دانشکده فنی</h3>
+                                </div>
+                                <div class="site-body">
+                                    <p><strong>نرم‌افزارهای پیش‌فرض:</strong></p>
+                                    <div class="software-tags">
+                                        <span class="software-tag">Python 3.11</span>
+                                        <span class="software-tag">MATLAB R2022b</span>
+                                        <span class="software-tag">VS Code 1.78</span>
+                                        <span class="software-tag">Office 2021</span>
+                                        <span class="software-tag">Adobe CC</span>
+                                    </div>
+
+                                    <div style="margin-top: 20px;">
+                                        <button class="btn btn-outline btn-sm">
+                                            <i class="fas fa-edit"></i> ویرایش نرم‌افزارها
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- سایت ۲ -->
+                            <div class="site-card">
+                                <div class="site-header">
+                                    <h3>آزمایشگاه مهندسی نرم‌افزار</h3>
+                                </div>
+                                <div class="site-body">
+                                    <p><strong>نرم‌افزارهای پیش‌فرض:</strong></p>
+                                    <div class="software-tags">
+                                        <span class="software-tag">Java JDK 17</span>
+                                        <span class="software-tag">IntelliJ 2023.1</span>
+                                        <span class="software-tag">Docker 24.0</span>
+                                        <span class="software-tag">PostgreSQL 15</span>
+                                        <span class="software-tag">Git</span>
+                                    </div>
+
+                                    <div style="margin-top: 20px;">
+                                        <button class="btn btn-outline btn-sm">
+                                            <i class="fas fa-edit"></i> ویرایش نرم‌افزارها
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- سایت ۳ -->
+                            <div class="site-card">
+                                <div class="site-header">
+                                    <h3>مرکز کامپیوتر کتابخانه مرکزی</h3>
+                                </div>
+                                <div class="site-body">
+                                    <p><strong>نرم‌افزارهای پیش‌فرض:</strong></p>
+                                    <div class="software-tags">
+                                        <span class="software-tag">Office 2021</span>
+                                        <span class="software-tag">Adobe Reader</span>
+                                        <span class="software-tag">Python 3.11</span>
+                                        <span class="software-tag">Visual Studio</span>
+                                    </div>
+
+                                    <div style="margin-top: 20px;">
+                                        <button class="btn btn-outline btn-sm">
+                                            <i class="fas fa-edit"></i> ویرایش نرم‌افزارها
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- مودال افزودن نرم‌افزار -->
+    <div id="addSoftwareModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus"></i> افزودن نرم‌افزار جدید</h3>
+                <span class="close-modal" onclick="closeAddSoftwareModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="addSoftwareForm">
+                    <div class="form-group">
+                        <label for="softwareName">نام نرم‌افزار</label>
+                        <input type="text" id="softwareName" class="form-control" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="softwareVersion">نسخه</label>
+                            <input type="text" id="softwareVersion" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="softwareLicense">کلید لایسنس</label>
+                            <input type="text" id="softwareLicense" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="softwareDescription">توضیحات (اختیاری)</label>
+                        <textarea id="softwareDescription" class="form-control" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success" style="width: 100%;">
+                            <i class="fas fa-save"></i> ذخیره نرم‌افزار
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/app.js"></script>
+    <script>
+        // مدیریت تب‌ها
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const tabId = this.dataset.tab;
+
+                    // حذف کلاس active از همه تب‌ها
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+
+                    // اضافه کردن کلاس active به تب انتخاب شده
+                    this.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
+            // بارگذاری نرم‌افزارها
+            setTimeout(() => {
+                if (window.DashboardManager && window.DashboardManager.loadSoftware) {
+                    window.DashboardManager.loadSoftware();
+                }
+            }, 100);
+
+            // فعال کردن انتخاب میز پس از انتخاب سایت
+            const siteSelect = document.getElementById('selectSiteForDesk');
+            const deskSelect = document.getElementById('selectDesk');
+
+            if (siteSelect) {
+                siteSelect.addEventListener('change', function () {
+                    if (this.value) {
+                        deskSelect.disabled = false;
+                        deskSelect.innerHTML = `
+                            <option value="">میز را انتخاب کنید</option>
+                            <option value="A-01">A-01</option>
+                            <option value="A-02">A-02</option>
+                            <option value="A-03">A-03</option>
+                            <option value="A-04">A-04</option>
+                            <option value="A-05">A-05</option>
+                            <option value="A-06">A-06</option>
+                            <option value="A-07">A-07</option>
+                            <option value="A-08">A-08</option>
+                            <option value="A-09">A-09</option>
+                            <option value="A-10">A-10</option>
+                        `;
+                    } else {
+                        deskSelect.disabled = true;
+                        deskSelect.innerHTML = '<option value="">ابتدا سایت را انتخاب کنید</option>';
+                    }
+                });
+            }
+
+            // فرم افزودن نرم‌افزار
+            const addSoftwareForm = document.getElementById('addSoftwareForm');
+            if (addSoftwareForm) {
+                addSoftwareForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    window.NotificationManager.show('نرم‌افزار با موفقیت اضافه شد');
+                    closeAddSoftwareModal();
+                });
+            }
+        });
+
+        // توابع مودال
+        function showAddSoftwareModal() {
+            document.getElementById('addSoftwareModal').style.display = 'block';
+        }
+
+        function closeAddSoftwareModal() {
+            document.getElementById('addSoftwareModal').style.display = 'none';
+            document.getElementById('addSoftwareForm').reset();
+        }
+
+        function addSoftwareToDesk() {
+            const select = document.getElementById('addSoftwareToDesk');
+            const value = select.value;
+            const text = select.options[select.selectedIndex].text;
+
+            if (value) {
+                const tag = document.createElement('span');
+                tag.className = 'software-tag';
+                tag.innerHTML = `${text} <i class="fas fa-times" onclick="removeSoftware(this)"></i>`;
+
+                document.getElementById('currentSoftwareTags').appendChild(tag);
+                select.value = '';
+
+                window.NotificationManager.show('نرم‌افزار به لیست اضافه شد');
+            }
+        }
+
+        function removeSoftware(element) {
+            element.parentElement.remove();
+        }
+
+        // بستن مودال با کلیک خارج از آن
+        window.onclick = function (event) {
+            const modal = document.getElementById('addSoftwareModal');
+            if (event.target === modal) {
+                closeAddSoftwareModal();
+            }
+        };
+    </script>
+
+    <style>
+        /* استایل‌های مودال */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 0;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 20px;
+            background-color: #2c3e50;
+            color: white;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+        }
+
+        .close-modal {
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        /* استایل‌های تب‌ها */
+        .tab-btn {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            color: #2c3e50;
+        }
+
+        .tab-btn.active {
+            color: #3498db;
+            border-bottom-color: #3498db;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* استایل‌های تگ نرم‌افزار */
+        .software-tag i {
+            margin-right: 5px;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+        .software-tag i:hover {
+            opacity: 1;
+        }
+    </style>
+</body>
+
+</html>

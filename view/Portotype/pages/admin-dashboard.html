@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>داشبورد ادمین - سیستم مدیریت سایت‌ها</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- نوار کناری -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="user-info">
+                    <i class="fas fa-user-cog fa-2x"></i>
+                    <div class="user-details">
+                        <h3 id="userName">مدیر سیستم</h3>
+                        <p id="userRole">ادمین</p>
+                    </div>
+                </div>
+                <div id="userInfo" style="margin-top: 15px; font-size: 0.9rem;">
+                    <p><strong>سطح دسترسی:</strong> کامل</p>
+                    <p><strong>آخرین ورود:</strong> امروز ۱۰:۳۰</p>
+                </div>
+            </div>
+
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="admin-dashboard.html" class="active"><i class="fas fa-home"></i> داشبورد</a></li>
+                    <li><a href="admin-reservations.html"><i class="fas fa-calendar-check"></i> مدیریت رزروها</a></li>
+                    <li><a href="admin-reports.html"><i class="fas fa-exclamation-triangle"></i> گزارشات خرابی</a></li>
+                    <li><a href="admin-software.html"><i class="fas fa-cogs"></i> مدیریت نرم‌افزار</a></li>
+                    <li><a href="admin-users.html"><i class="fas fa-users"></i> مدیریت کاربران</a></li>
+                    <li><a href="announcements.html"><i class="fas fa-bell"></i> اعلان‌ها</a></li>
+                    <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> خروج</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- محتوای اصلی -->
+        <main class="main-content">
+            <div class="content-header">
+                <h2><i class="fas fa-home"></i> داشبورد مدیریت سیستم</h2>
+                <div class="date-display" id="currentDate"></div>
+            </div>
+
+            <!-- کارت‌های آمار کلی -->
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-desktop"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalDesks">۰</h3>
+                        <p>کل میزها</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="freeDesks">۰</h3>
+                        <p>میزهای آزاد</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="pendingReservations">۰</h3>
+                        <p>رزروهای در انتظار</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="openReports">۰</h3>
+                        <p>گزارشات باز</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- سایت‌های کامپیوتری -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-sitemap"></i> سایت‌های کامپیوتری</h3>
+                    <div>
+                        <button class="btn btn-primary" onclick="window.location.href='admin-software.html'">
+                            <i class="fas fa-cogs"></i> مدیریت نرم‌افزارها
+                        </button>
+                        <button class="btn btn-outline" style="margin-right: 10px;">
+                            <i class="fas fa-plus"></i> افزودن سایت
+                        </button>
+                    </div>
+                </div>
+                <div style="padding: 20px;">
+                    <div class="sites-grid" id="sitesContainer">
+                        <!-- سایت‌ها توسط JavaScript پر می‌شود -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- رزروهای در انتظار تایید -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-clock"></i> رزروهای در انتظار تایید</h3>
+                    <a href="admin-reservations.html" class="btn btn-primary">مشاهده همه</a>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>کاربر</th>
+                            <th>سایت</th>
+                            <th>تاریخ</th>
+                            <th>زمان</th>
+                            <th>نوع</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pendingReservationsTableBody">
+                        <!-- داده‌ها توسط JavaScript پر می‌شود -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- گزارشات خرابی اخیر -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-exclamation-triangle"></i> گزارشات خرابی اخیر</h3>
+                    <a href="admin-reports.html" class="btn btn-primary">مشاهده همه</a>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>کاربر</th>
+                            <th>سایت</th>
+                            <th>میز</th>
+                            <th>شرح مشکل</th>
+                            <th>اولویت</th>
+                            <th>وضعیت</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>علی محمدی</td>
+                            <td>سایت دانشکده فنی</td>
+                            <td>A-08</td>
+                            <td>مانیتور سیستم روشن نمی‌شود</td>
+                            <td><span class="status-badge status-rejected">بالا</span></td>
+                            <td><span class="status-badge status-pending">در انتظار</span></td>
+                        </tr>
+                        <tr>
+                            <td>دکتر رضایی</td>
+                            <td>آزمایشگاه نرم‌افزار</td>
+                            <td>B-12</td>
+                            <td>سیستم هنگ می‌کند هنگام اجرای برنامه</td>
+                            <td><span class="status-badge status-pending">متوسط</span></td>
+                            <td><span class="status-badge status-warning">در حال بررسی</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/app.js"></script>
+    <script>
+        // نمایش تاریخ جاری
+        document.addEventListener('DOMContentLoaded', function () {
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const dateStr = now.toLocaleDateString('fa-IR', options);
+            document.getElementById('currentDate').textContent = dateStr;
+        });
+    </script>
+</body>
+
+</html>

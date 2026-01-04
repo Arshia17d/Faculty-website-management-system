@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدیریت رزروها - ادمین</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- نوار کناری -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="user-info">
+                    <i class="fas fa-user-cog fa-2x"></i>
+                    <div class="user-details">
+                        <h3 id="userName">مدیر سیستم</h3>
+                        <p>ادمین</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="admin-dashboard.html"><i class="fas fa-home"></i> داشبورد</a></li>
+                    <li><a href="admin-reservations.html" class="active"><i class="fas fa-calendar-check"></i> مدیریت
+                            رزروها</a></li>
+                    <li><a href="admin-reports.html"><i class="fas fa-exclamation-triangle"></i> گزارشات خرابی</a></li>
+                    <li><a href="admin-software.html"><i class="fas fa-cogs"></i> مدیریت نرم‌افزار</a></li>
+                    <li><a href="admin-users.html"><i class="fas fa-users"></i> مدیریت کاربران</a></li>
+                    <li><a href="announcements.html"><i class="fas fa-bell"></i> اعلان‌ها</a></li>
+                    <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> خروج</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- محتوای اصلی -->
+        <main class="main-content">
+            <div class="content-header">
+                <h2><i class="fas fa-calendar-check"></i> مدیریت رزروها</h2>
+                <a href="admin-dashboard.html" class="btn btn-outline">
+                    <i class="fas fa-arrow-right"></i> بازگشت به داشبورد
+                </a>
+            </div>
+
+            <!-- فیلترها -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-filter"></i> فیلتر رزروها</h3>
+                </div>
+                <div style="padding: 20px;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="filterSite">سایت</label>
+                            <select id="filterSite" class="form-control">
+                                <option value="">همه سایت‌ها</option>
+                                <option value="1">سایت کامپیوتر دانشکده فنی</option>
+                                <option value="2">آزمایشگاه مهندسی نرم‌افزار</option>
+                                <option value="3">مرکز کامپیوتر کتابخانه مرکزی</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="filterDate">تاریخ</label>
+                            <input type="date" id="filterDate" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="filterStatus">وضعیت</label>
+                            <select id="filterStatus" class="form-control">
+                                <option value="">همه وضعیت‌ها</option>
+                                <option value="pending">در انتظار</option>
+                                <option value="approved">تایید شده</option>
+                                <option value="rejected">رد شده</option>
+                                <option value="cancelled">لغو شده</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="filterType">نوع رزرو</label>
+                            <select id="filterType" class="form-control">
+                                <option value="">همه انواع</option>
+                                <option value="student">رزرو میز (دانشجو)</option>
+                                <option value="professor">رزرو سایت (استاد)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="text-align: left; margin-top: 15px;">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-search"></i> اعمال فیلتر
+                        </button>
+                        <button class="btn btn-outline" style="margin-right: 10px;">
+                            <i class="fas fa-redo"></i> بازنشانی
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- لیست رزروها -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-list"></i> لیست رزروها</h3>
+                    <div>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-file-export"></i> خروجی Excel
+                        </button>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>شناسه</th>
+                            <th>کاربر</th>
+                            <th>سایت</th>
+                            <th>تاریخ</th>
+                            <th>زمان</th>
+                            <th>نوع</th>
+                            <th>وضعیت</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#RES-1001</td>
+                            <td>علی محمدی (98123456)</td>
+                            <td>سایت دانشکده فنی</td>
+                            <td>1403/01/22</td>
+                            <td>۱۴:۰۰ - ۱۶:۰۰</td>
+                            <td>رزرو میز</td>
+                            <td><span class="status-badge status-pending">در انتظار</span></td>
+                            <td>
+                                <button class="btn btn-success btn-sm"
+                                    onclick="window.DashboardManager.approveReservation(1)">
+                                    تایید
+                                </button>
+                                <button class="btn btn-danger btn-sm"
+                                    onclick="window.DashboardManager.rejectReservation(1)">
+                                    رد
+                                </button>
+                                <button class="btn btn-outline btn-sm">
+                                    جزئیات
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>#RES-1002</td>
+                            <td>دکتر رضایی (emp-1234)</td>
+                            <td>سایت دانشکده فنی</td>
+                            <td>1403/01/25</td>
+                            <td>۰۸:۰۰ - ۱۰:۰۰</td>
+                            <td>رزرو سایت</td>
+                            <td><span class="status-badge status-pending">در انتظار</span></td>
+                            <td>
+                                <button class="btn btn-success btn-sm"
+                                    onclick="window.DashboardManager.approveReservation(2)">
+                                    تایید
+                                </button>
+                                <button class="btn btn-danger btn-sm"
+                                    onclick="window.DashboardManager.rejectReservation(2)">
+                                    رد
+                                </button>
+                                <button class="btn btn-outline btn-sm">
+                                    جزئیات
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>#RES-1003</td>
+                            <td>فاطمه کریمی (98234567)</td>
+                            <td>آزمایشگاه نرم‌افزار</td>
+                            <td>1403/01/20</td>
+                            <td>۱۰:۰۰ - ۱۲:۰۰</td>
+                            <td>رزرو میز</td>
+                            <td><span class="status-badge status-approved">تایید شده</span></td>
+                            <td>
+                                <button class="btn btn-warning btn-sm">لغو</button>
+                                <button class="btn btn-outline btn-sm">جزئیات</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>#RES-1004</td>
+                            <td>دکتر حسینی (emp-5678)</td>
+                            <td>مرکز کتابخانه</td>
+                            <td>1403/01/18</td>
+                            <td>۱۴:۰۰ - ۱۶:۰۰</td>
+                            <td>رزرو سایت</td>
+                            <td><span class="status-badge status-rejected">رد شده</span></td>
+                            <td>
+                                <button class="btn btn-outline btn-sm">جزئیات</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>#RES-1005</td>
+                            <td>محمد احمدی (98345678)</td>
+                            <td>سایت دانشکده فنی</td>
+                            <td>1403/01/19</td>
+                            <td>۱۶:۰۰ - ۱۸:۰۰</td>
+                            <td>رزرو میز</td>
+                            <td><span class="status-badge status-approved">تایید شده</span></td>
+                            <td>
+                                <button class="btn btn-warning btn-sm">لغو</button>
+                                <button class="btn btn-outline btn-sm">جزئیات</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- صفحه‌بندی -->
+                <div style="padding: 15px; display: flex; justify-content: center; border-top: 1px solid #eee;">
+                    <nav>
+                        <ul style="list-style: none; display: flex; gap: 5px;">
+                            <li><a href="#"
+                                    style="padding: 8px 12px; background-color: #3498db; color: white; border-radius: 4px;">۱</a>
+                            </li>
+                            <li><a href="#"
+                                    style="padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px;">۲</a></li>
+                            <li><a href="#"
+                                    style="padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px;">۳</a></li>
+                            <li><a href="#"
+                                    style="padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px;">بعدی</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- آمار رزروها -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-chart-bar"></i> آمار رزروها</h3>
+                </div>
+                <div style="padding: 20px;">
+                    <div class="form-row">
+                        <div class="form-group" style="text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #3498db;">۱۵</div>
+                            <div style="color: #666; font-size: 0.9rem;">رزرو امروز</div>
+                        </div>
+
+                        <div class="form-group" style="text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #27ae60;">۴۲</div>
+                            <div style="color: #666; font-size: 0.9rem;">رزرو این هفته</div>
+                        </div>
+
+                        <div class="form-group" style="text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #f39c12;">۱۲۳</div>
+                            <div style="color: #666; font-size: 0.9rem;">رزرو این ماه</div>
+                        </div>
+
+                        <div class="form-group" style="text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #e74c3c;">۵</div>
+                            <div style="color: #666; font-size: 0.9rem;">در انتظار تایید</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/app.js"></script>
+</body>
+
+</html>

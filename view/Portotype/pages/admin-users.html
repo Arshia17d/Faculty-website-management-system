@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدیریت کاربران - ادمین</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- نوار کناری -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="user-info">
+                    <i class="fas fa-user-cog fa-2x"></i>
+                    <div class="user-details">
+                        <h3 id="userName">مدیر سیستم</h3>
+                        <p>ادمین</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="admin-dashboard.html"><i class="fas fa-home"></i> داشبورد</a></li>
+                    <li><a href="admin-reservations.html"><i class="fas fa-calendar-check"></i> مدیریت رزروها</a></li>
+                    <li><a href="admin-reports.html"><i class="fas fa-exclamation-triangle"></i> گزارشات خرابی</a></li>
+                    <li><a href="admin-software.html"><i class="fas fa-cogs"></i> مدیریت نرم‌افزار</a></li>
+                    <li><a href="admin-users.html" class="active"><i class="fas fa-users"></i> مدیریت کاربران</a></li>
+                    <li><a href="announcements.html"><i class="fas fa-bell"></i> اعلان‌ها</a></li>
+                    <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> خروج</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- محتوای اصلی -->
+        <main class="main-content">
+            <div class="content-header">
+                <h2><i class="fas fa-users"></i> مدیریت کاربران و نقش‌ها</h2>
+                <a href="admin-dashboard.html" class="btn btn-outline">
+                    <i class="fas fa-arrow-right"></i> بازگشت به داشبورد
+                </a>
+            </div>
+
+            <!-- کارت‌های آمار کاربران -->
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>۸۵۰</h3>
+                        <p>دانشجو</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>۴۲</h3>
+                        <p>استاد</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-cog"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>۵</h3>
+                        <p>ادمین</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>۱۲</h3>
+                        <p>کاربران غیرفعال</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- تب‌های مدیریت کاربران -->
+            <div style="margin-bottom: 30px;">
+                <div style="border-bottom: 1px solid #ddd;">
+                    <button class="user-tab-btn active" data-tab="users-list">لیست کاربران</button>
+                    <button class="user-tab-btn" data-tab="add-user">افزودن کاربر</button>
+                    <button class="user-tab-btn" data-tab="roles-management">مدیریت نقش‌ها</button>
+                </div>
+            </div>
+
+            <!-- تب ۱: لیست کاربران -->
+            <div id="users-list" class="user-tab-content active">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3><i class="fas fa-list"></i> لیست کاربران سیستم</h3>
+                        <div>
+                            <button class="btn btn-primary">
+                                <i class="fas fa-file-export"></i> خروجی Excel
+                            </button>
+                            <button class="btn btn-outline" style="margin-right: 10px;">
+                                <i class="fas fa-filter"></i> فیلتر
+                            </button>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>شناسه کاربری</th>
+                                <th>نام</th>
+                                <th>نقش</th>
+                                <th>دانشکده/دپارتمان</th>
+                                <th>وضعیت</th>
+                                <th>آخرین ورود</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- داده‌ها توسط JavaScript پر می‌شود -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- تب ۲: افزودن کاربر -->
+            <div id="add-user" class="user-tab-content">
+                <div class="form-container">
+                    <h3><i class="fas fa-user-plus"></i> افزودن کاربر جدید</h3>
+                    <form id="addUserForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="newUserId">شناسه کاربری</label>
+                                <input type="text" id="newUserId" class="form-control" required>
+                                <small class="form-text text-muted">برای دانشجو: شماره دانشجویی، برای استاد: شناسه کارمندی</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="newUserFullName">نام کامل</label>
+                                <input type="text" id="newUserFullName" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="newUserRole">نقش کاربر</label>
+                                <select id="newUserRole" class="form-control" required>
+                                    <option value="">انتخاب کنید</option>
+                                    <option value="student">دانشجو</option>
+                                    <option value="professor">استاد</option>
+                                    <option value="admin">ادمین</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="newUserFaculty">دانشکده / دپارتمان</label>
+                                <input type="text" id="newUserFaculty" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="newUserEmail">ایمیل</label>
+                                <input type="email" id="newUserEmail" class="form-control" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="newUserPhone">شماره تماس</label>
+                                <input type="tel" id="newUserPhone" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="newUserPassword">رمز عبور</label>
+                                <input type="password" id="newUserPassword" class="form-control" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirmPassword">تکرار رمز عبور</label>
+                                <input type="password" id="confirmPassword" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newUserNotes">توضیحات (اختیاری)</label>
+                            <textarea id="newUserNotes" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 30px;">
+                            <button type="submit" class="btn btn-success" style="width: 100%; padding: 12px;">
+                                <i class="fas fa-save"></i> ایجاد حساب کاربری
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- تب ۳: مدیریت نقش‌ها -->
+            <div id="roles-management" class="user-tab-content">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3><i class="fas fa-user-tag"></i> نقش‌های دسترسی</h3>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i> افزودن نقش جدید
+                        </button>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div class="roles-grid">
+                            <!-- نقش دانشجو -->
+                            <div class="role-card" style="background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                    <h4 style="margin: 0; color: #2c3e50;">دانشجو</h4>
+                                    <span class="status-badge" style="background-color: #27ae60; color: white;">پیش‌فرض</span>
+                                </div>
+                                <p style="color: #666; margin-bottom: 15px;">دسترسی به رزرو میز، گزارش خرابی و مشاهده اعلان‌ها</p>
+                                <div style="margin-bottom: 15px;">
+                                    <strong>مجوزها:</strong>
+                                    <ul style="padding-right: 20px; margin-top: 10px;">
+                                        <li>رزرو میز کامپیوتر</li>
+                                        <li>ثبت گزارش خرابی</li>
+                                        <li>مشاهده اعلان‌ها</li>
+                                        <li>مشاهده تاریخچه رزروها</li>
+                                    </ul>
+                                </div>
+                                <button class="btn btn-outline btn-sm">
+                                    <i class="fas fa-edit"></i> ویرایش نقش
+                                </button>
+                            </div>
+
+                            <!-- نقش استاد -->
+                            <div class="role-card" style="background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                    <h4 style="margin: 0; color: #2c3e50;">استاد</h4>
+                                    <span class="status-badge" style="background-color: #3498db; color: white;">پیش‌فرض</span>
+                                </div>
+                                <p style="color: #666; margin-bottom: 15px;">دسترسی به رزرو سایت، گزارش خرابی و مشاهده اعلان‌ها</p>
+                                <div style="margin-bottom: 15px;">
+                                    <strong>مجوزها:</strong>
+                                    <ul style="padding-right: 20px; margin-top: 10px;">
+                                        <li>رزرو سایت برای کلاس</li>
+                                        <li>ثبت گزارش خرابی</li>
+                                        <li>مشاهده اعلان‌ها</li>
+                                        <li>مشاهده تاریخچه رزروها</li>
+                                        <li>مشاهده لیست دانشجویان</li>
+                                    </ul>
+                                </div>
+                                <button class="btn btn-outline btn-sm">
+                                    <i class="fas fa-edit"></i> ویرایش نقش
+                                </button>
+                            </div>
+
+                            <!-- نقش ادمین -->
+                            <div class="role-card" style="background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                    <h4 style="margin: 0; color: #2c3e50;">ادمین</h4>
+                                    <span class="status-badge" style="background-color: #2c3e50; color: white;">پیش‌فرض</span>
+                                </div>
+                                <p style="color: #666; margin-bottom: 15px;">دسترسی کامل به تمام بخش‌های سیستم</p>
+                                <div style="margin-bottom: 15px;">
+                                    <strong>مجوزها:</strong>
+                                    <ul style="padding-right: 20px; margin-top: 10px;">
+                                        <li>مدیریت تمام رزروها</li>
+                                        <li>مدیریت گزارشات خرابی</li>
+                                        <li>مدیریت نرم‌افزارها</li>
+                                        <li>مدیریت کاربران و نقش‌ها</li>
+                                        <li>ایجاد و مدیریت اعلان‌ها</li>
+                                        <li>مشاهده گزارشات و آمار</li>
+                                    </ul>
+                                </div>
+                                <button class="btn btn-outline btn-sm">
+                                    <i class="fas fa-edit"></i> ویرایش نقش
+                                </button>
+                            </div>
+
+                            <!-- نقش ادمین محدود -->
+                            <div class="role-card" style="background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                    <h4 style="margin: 0; color: #2c3e50;">ادمین محدود</h4>
+                                    <span class="status-badge" style="background-color: #f39c12; color: white;">سفارشی</span>
+                                </div>
+                                <p style="color: #666; margin-bottom: 15px;">دسترسی محدود به بخش‌های خاصی از سیستم</p>
+                                <div style="margin-bottom: 15px;">
+                                    <strong>مجوزها:</strong>
+                                    <ul style="padding-right: 20px; margin-top: 10px;">
+                                        <li>مدیریت رزروها</li>
+                                        <li>مدیریت گزارشات خرابی</li>
+                                        <li>مشاهده اعلان‌ها</li>
+                                        <li>مشاهده گزارشات</li>
+                                    </ul>
+                                </div>
+                                <button class="btn btn-outline btn-sm">
+                                    <i class="fas fa-edit"></i> ویرایش نقش
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- مجوزهای سیستم -->
+                <div class="table-container" style="margin-top: 30px;">
+                    <div class="table-header">
+                        <h3><i class="fas fa-key"></i> مجوزهای سیستم</h3>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px;">
+                                    <h5 style="margin-top: 0;">مجوزهای رزرواسیون</h5>
+                                    <div style="margin-top: 10px;">
+                                        <label style="display: block; margin-bottom: 5px;">
+                                            <input type="checkbox" checked> ایجاد رزرو
+                                        </label>
+                                        <label style="display: block; margin-bottom: 5px;">
+                                            <input type="checkbox" checked> ویرایش رزرو
+                                        </label>
+                                        <label style="display: block; margin-bottom: 5px;">
+                                            <input type="checkbox" checked> لغو رزرو
+                                        </label>
+                                        <label style="display: block; margin-bottom: 5px;">
+                                            <input type="checkbox"> تایید رزروهای دیگران
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px;">
+                                    <h5 style="margin-top: 0;">مجوزهای مدیریت</h5>
+                                    <div style="margin-top: 10px;">
+                                        <label style="display: block; margin-bottom: 5px;">
+                                            <input type="checkbox"> مدیریت کاربران
+                                        </label>
+                                        <label style="display: block; margin-bottom: 5px;">
+                                            <input type="checkbox"> مدیریت نرم‌افزارها
+                                        </label>
+                                        <label style="display: block; margin-bottom: 5px;">
+                                            <input type="checkbox"> مدیریت سایت‌ها
+                                        </label>
+                                        <label style="display: block; margin-bottom: 5px;">
+                                            <input type="checkbox"> مشاهده گزارشات سیستم
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px;">
+                                    <h5 style="margin-top: 0;">مجوزهای اعلان</h5>
+                                    <div style="margin-top: 10px;">
+                                        <label style="display: block; margin-bottom: 5px;">
+                                            <input type="checkbox" checked> مشاهده اعلان‌ها
+                                        </label>
+                                        <label style="display: block; margin-bottom: 5px;">
+                                            <input type="checkbox"> ایجاد اعلان
+                                        </label>
+                                        <label style="display: block; margin-bottom: 5px;">
+                                            <input type="checkbox"> ویرایش اعلان
+                                        </label>
+                                        <label style="display: block; margin-bottom: 5px;">
+                                            <input type="checkbox"> حذف اعلان
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="text-align: left; margin-top: 20px;">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-save"></i> ذخیره تغییرات مجوزها
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/app.js"></script>
+    <script>
+        // مدیریت تب‌ها
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabBtns = document.querySelectorAll('.user-tab-btn');
+            const tabContents = document.querySelectorAll('.user-tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const tabId = this.dataset.tab;
+
+                    // حذف کلاس active از همه تب‌ها
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+
+                    // اضافه کردن کلاس active به تب انتخاب شده
+                    this.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
+            // فرم افزودن کاربر
+            const addUserForm = document.getElementById('addUserForm');
+            if (addUserForm) {
+                addUserForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    const password = document.getElementById('newUserPassword').value;
+                    const confirmPassword = document.getElementById('confirmPassword').value;
+
+                    if (password !== confirmPassword) {
+                        window.NotificationManager.show('رمز عبور و تکرار آن یکسان نیستند', 'error');
+                        return;
+                    }
+
+                    window.NotificationManager.show('کاربر جدید با موفقیت ایجاد شد');
+                    this.reset();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

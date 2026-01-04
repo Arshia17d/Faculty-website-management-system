@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اعلان‌ها - سیستم مدیریت سایت‌ها</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- نوار کناری -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="user-info">
+                    <div class="user-details">
+                        <h3 id="userName">علی محمدی</h3>
+                        <p id="userRole">دانشجو</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="student-dashboard.html"><i class="fas fa-home"></i> داشبورد</a></li>
+                    <li><a href="student-reservation.html"><i class="fas fa-calendar-plus"></i> رزرو میز</a></li>
+                    <li><a href="malfunction-report.html"><i class="fas fa-exclamation-triangle"></i> گزارش خرابی</a>
+                    </li>
+                    <li><a href="announcements.html" class="active"><i class="fas fa-bell"></i> اعلان‌ها</a></li>
+                    <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> خروج</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- محتوای اصلی -->
+        <main class="main-content">
+            <div class="content-header">
+                <h2><i class="fas fa-bell"></i> اعلان‌ها و اطلاعیه‌ها</h2>
+                <div class="date-display" id="currentDate"></div>
+            </div>
+
+            <!-- محتوای اعلان‌ها -->
+            <div id="announcementsContainer">
+                <!-- اعلان‌ها توسط JavaScript پر می‌شود -->
+            </div>
+
+            <!-- اعلان‌های نمونه (در صورتی که JavaScript کار نکند) -->
+            <div class="announcements-list">
+                <!-- اعلان ۱ -->
+                <div class="announcement-card fade-in"
+                    style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; overflow: hidden;">
+                    <div class="announcement-header"
+                        style="padding: 15px 20px; background-color: #2c3e50; color: white; display: flex; justify-content: space-between; align-items: center;">
+                        <h4 style="margin: 0;">تعمیرات سایت دانشکده فنی</h4>
+                        <span class="status-badge status-rejected">بالا</span>
+                    </div>
+                    <div class="announcement-body" style="padding: 20px;">
+                        <p>به اطلاع می‌رساند سایت کامپیوتر دانشکده فنی در تاریخ 1403/01/25 جهت تعمیرات سیستم‌های
+                            خنک‌کننده تعطیل خواهد بود. لطفاً برای این تاریخ رزروی انجام ندهید.</p>
+                    </div>
+                    <div class="announcement-footer"
+                        style="padding: 10px 20px; background-color: #f8f9fa; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; color: #666;">
+                        <span><i class="fas fa-user"></i> ادمین سیستم</span>
+                        <span><i class="fas fa-calendar"></i> 1403/01/20 - ۱۰:۳۰</span>
+                    </div>
+                </div>
+
+                <!-- اعلان ۲ -->
+                <div class="announcement-card fade-in"
+                    style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; overflow: hidden;">
+                    <div class="announcement-header"
+                        style="padding: 15px 20px; background-color: #2c3e50; color: white; display: flex; justify-content: space-between; align-items: center;">
+                        <h4 style="margin: 0;">نصب نرم‌افزارهای جدید</h4>
+                        <span class="status-badge status-pending">متوسط</span>
+                    </div>
+                    <div class="announcement-body" style="padding: 20px;">
+                        <p>نرم‌افزارهای Python 3.11 و VS Code نسخه 1.78 روی تمام سیستم‌های سایت‌ها نصب شد. همچنین MATLAB
+                            نسخه 2022b روی سیستم‌های سایت دانشکده فنی و آزمایشگاه نرم‌افزار نصب شده است.</p>
+                    </div>
+                    <div class="announcement-footer"
+                        style="padding: 10px 20px; background-color: #f8f9fa; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; color: #666;">
+                        <span><i class="fas fa-user"></i> ادمین سیستم</span>
+                        <span><i class="fas fa-calendar"></i> 1403/01/18 - ۱۴:۱۵</span>
+                    </div>
+                </div>
+
+                <!-- اعلان ۳ -->
+                <div class="announcement-card fade-in"
+                    style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; overflow: hidden;">
+                    <div class="announcement-header"
+                        style="padding: 15px 20px; background-color: #2c3e50; color: white; display: flex; justify-content: space-between; align-items: center;">
+                        <h4 style="margin: 0;">تغییر در ساعت کاری سایت‌ها</h4>
+                        <span class="status-badge status-approved">پایین</span>
+                    </div>
+                    <div class="announcement-body" style="padding: 20px;">
+                        <p>با توجه به شروع ترم جدید، ساعت کاری سایت‌های کامپیوتری از تاریخ 1403/01/25 تغییر می‌کند.
+                            سایت‌ها از ساعت ۸ صبح تا ۸ شب فعال خواهند بود.</p>
+                    </div>
+                    <div class="announcement-footer"
+                        style="padding: 10px 20px; background-color: #f8f9fa; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; color: #666;">
+                        <span><i class="fas fa-user"></i> ادمین سیستم</span>
+                        <span><i class="fas fa-calendar"></i> 1403/01/15 - ۰۹:۴۵</span>
+                    </div>
+                </div>
+
+                <!-- اعلان ۴ -->
+                <div class="announcement-card fade-in"
+                    style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; overflow: hidden;">
+                    <div class="announcement-header"
+                        style="padding: 15px 20px; background-color: #2c3e50; color: white; display: flex; justify-content: space-between; align-items: center;">
+                        <h4 style="margin: 0;">برگزاری کارگاه برنامه‌نویسی Python</h4>
+                        <span class="status-badge status-pending">متوسط</span>
+                    </div>
+                    <div class="announcement-body" style="padding: 20px;">
+                        <p>کارگاه آموزشی برنامه‌نویسی Python برای دانشجویان رشته کامپیوتر در تاریخ 1403/02/05 در سایت
+                            دانشکده فنی برگزار می‌شود. ظرفیت محدود است. برای ثبت نام به دفتر دانشکده مراجعه کنید.</p>
+                    </div>
+                    <div class="announcement-footer"
+                        style="padding: 10px 20px; background-color: #f8f9fa; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; color: #666;">
+                        <span><i class="fas fa-user"></i> ادمین سیستم</span>
+                        <span><i class="fas fa-calendar"></i> 1403/01/10 - ۱۱:۲۰</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- فیلتر اعلان‌ها -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-filter"></i> فیلتر اعلان‌ها</h3>
+                </div>
+                <div style="padding: 20px;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="announcementPriority">اولویت</label>
+                            <select id="announcementPriority" class="form-control">
+                                <option value="">همه اولویت‌ها</option>
+                                <option value="high">بالا</option>
+                                <option value="medium">متوسط</option>
+                                <option value="low">پایین</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="announcementDate">تاریخ از</label>
+                            <input type="date" id="announcementDate" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="announcementCategory">دسته‌بندی</label>
+                            <select id="announcementCategory" class="form-control">
+                                <option value="">همه دسته‌بندی‌ها</option>
+                                <option value="maintenance">تعمیرات</option>
+                                <option value="software">نرم‌افزار</option>
+                                <option value="schedule">زمان‌بندی</option>
+                                <option value="event">رویداد</option>
+                                <option value="general">عمومی</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="announcementSearch">جست‌وجو در متن</label>
+                            <input type="text" id="announcementSearch" class="form-control" placeholder="کلیدواژه">
+                        </div>
+                    </div>
+
+                    <div style="text-align: left; margin-top: 15px;">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-search"></i> اعمال فیلتر
+                        </button>
+                        <button class="btn btn-outline" style="margin-right: 10px;">
+                            <i class="fas fa-redo"></i> بازنشانی
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- راهنمای اولویت اعلان‌ها -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-info-circle"></i> راهنمای اولویت اعلان‌ها</h3>
+                </div>
+                <div style="padding: 20px;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <div
+                                style="text-align: center; padding: 15px; background-color: #fdedec; border-radius: 8px;">
+                                <i class="fas fa-exclamation-circle fa-2x"
+                                    style="color: #c0392b; margin-bottom: 10px;"></i>
+                                <h4>اولویت بالا</h4>
+                                <p style="font-size: 0.9rem;">
+                                    تعطیلی سایت، مشکلات جدی، تغییرات فوری
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div
+                                style="text-align: center; padding: 15px; background-color: #fef9e7; border-radius: 8px;">
+                                <i class="fas fa-exclamation-triangle fa-2x"
+                                    style="color: #f39c12; margin-bottom: 10px;"></i>
+                                <h4>اولویت متوسط</h4>
+                                <p style="font-size: 0.9rem;">
+                                    نصب نرم‌افزار، تغییرات برنامه، اطلاعیه‌های مهم
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div
+                                style="text-align: center; padding: 15px; background-color: #d5f4e6; border-radius: 8px;">
+                                <i class="fas fa-info-circle fa-2x" style="color: #27ae60; margin-bottom: 10px;"></i>
+                                <h4>اولویت پایین</h4>
+                                <p style="font-size: 0.9rem;">
+                                    اطلاعیه‌های عمومی، اخبار، رویدادهای آینده
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/app.js"></script>
+    <script>
+        // نمایش تاریخ جاری
+        document.addEventListener('DOMContentLoaded', function () {
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const dateStr = now.toLocaleDateString('fa-IR', options);
+            document.getElementById('currentDate').textContent = dateStr;
+
+            // بارگذاری اعلان‌ها
+            setTimeout(() => {
+                if (window.DashboardManager && window.DashboardManager.loadAnnouncements) {
+                    window.DashboardManager.loadAnnouncements();
+                }
+            }, 100);
+        });
+
+        // استایل‌های اعلان‌ها
+        const style = document.createElement('style');
+        style.textContent = `
+            .announcements-list {
+                margin-bottom: 30px;
+            }
+            
+            .announcement-card {
+                animation: fadeIn 0.5s ease forwards;
+                margin-bottom: 20px;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+
+</html>

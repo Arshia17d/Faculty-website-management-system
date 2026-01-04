@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>گزارشات خرابی - ادمین</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- نوار کناری -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="user-info">
+                    <i class="fas fa-user-cog fa-2x"></i>
+                    <div class="user-details">
+                        <h3 id="userName">مدیر سیستم</h3>
+                        <p>ادمین</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="admin-dashboard.html"><i class="fas fa-home"></i> داشبورد</a></li>
+                    <li><a href="admin-reservations.html"><i class="fas fa-calendar-check"></i> مدیریت رزروها</a></li>
+                    <li><a href="admin-reports.html" class="active"><i class="fas fa-exclamation-triangle"></i> گزارشات
+                            خرابی</a></li>
+                    <li><a href="admin-software.html"><i class="fas fa-cogs"></i> مدیریت نرم‌افزار</a></li>
+                    <li><a href="admin-users.html"><i class="fas fa-users"></i> مدیریت کاربران</a></li>
+                    <li><a href="announcements.html"><i class="fas fa-bell"></i> اعلان‌ها</a></li>
+                    <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> خروج</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- محتوای اصلی -->
+        <main class="main-content">
+            <div class="content-header">
+                <h2><i class="fas fa-exclamation-triangle"></i> مدیریت گزارشات خرابی</h2>
+                <a href="admin-dashboard.html" class="btn btn-outline">
+                    <i class="fas fa-arrow-right"></i> بازگشت به داشبورد
+                </a>
+            </div>
+
+            <!-- کارت‌های آمار گزارشات -->
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalReports">۱۲</h3>
+                        <p>کل گزارشات</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="pendingReports">۳</h3>
+                        <p>در انتظار بررسی</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="inProgressReports">۲</h3>
+                        <p>در حال تعمیر</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="resolvedReports">۷</h3>
+                        <p>حل شده</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- فیلترها -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-filter"></i> فیلتر گزارشات</h3>
+                </div>
+                <div style="padding: 20px;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="filterReportSite">سایت</label>
+                            <select id="filterReportSite" class="form-control">
+                                <option value="">همه سایت‌ها</option>
+                                <option value="1">سایت کامپیوتر دانشکده فنی</option>
+                                <option value="2">آزمایشگاه مهندسی نرم‌افزار</option>
+                                <option value="3">مرکز کامپیوتر کتابخانه مرکزی</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="filterReportStatus">وضعیت</label>
+                            <select id="filterReportStatus" class="form-control">
+                                <option value="">همه وضعیت‌ها</option>
+                                <option value="pending">در انتظار</option>
+                                <option value="in-progress">در حال بررسی</option>
+                                <option value="resolved">حل شده</option>
+                                <option value="closed">بسته شده</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="filterReportPriority">اولویت</label>
+                            <select id="filterReportPriority" class="form-control">
+                                <option value="">همه اولویت‌ها</option>
+                                <option value="high">بالا</option>
+                                <option value="medium">متوسط</option>
+                                <option value="low">پایین</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="filterReportDate">تاریخ از</label>
+                            <input type="date" id="filterReportDate" class="form-control">
+                        </div>
+                    </div>
+
+                    <div style="text-align: left; margin-top: 15px;">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-search"></i> اعمال فیلتر
+                        </button>
+                        <button class="btn btn-outline" style="margin-right: 10px;">
+                            <i class="fas fa-redo"></i> بازنشانی
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- لیست گزارشات -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-list"></i> لیست گزارشات خرابی</h3>
+                    <div>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-file-export"></i> خروجی Excel
+                        </button>
+                        <button class="btn btn-outline" style="margin-right: 10px;">
+                            <i class="fas fa-print"></i> چاپ
+                        </button>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>شناسه</th>
+                            <th>گزارش‌دهنده</th>
+                            <th>سایت</th>
+                            <th>میز</th>
+                            <th>شرح مشکل</th>
+                            <th>اولویت</th>
+                            <th>تاریخ</th>
+                            <th>وضعیت</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportsTableBody">
+                        <!-- داده‌ها توسط JavaScript پر می‌شود -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- آمار پیشرفته -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-chart-pie"></i> آمار و تجزیه و تحلیل</h3>
+                </div>
+                <div style="padding: 20px;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <div
+                                style="text-align: center; padding: 20px; background-color: #f8f9fa; border-radius: 8px;">
+                                <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 10px;">شایع‌ترین مشکلات
+                                </div>
+                                <ul style="text-align: right; padding-right: 20px;">
+                                    <li>مشکل مانیتور (۴ مورد)</li>
+                                    <li>سیستم هنگ می‌کند (۳ مورد)</li>
+                                    <li>مشکل شبکه (۲ مورد)</li>
+                                    <li>نرم‌افزار اجرا نمی‌شود (۲ مورد)</li>
+                                    <li>صدا ندارد (۱ مورد)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div
+                                style="text-align: center; padding: 20px; background-color: #f8f9fa; border-radius: 8px;">
+                                <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 10px;">میانگین زمان حل
+                                    مشکل</div>
+                                <div style="font-size: 2.5rem; color: #3498db; margin: 20px 0;">۲.۵</div>
+                                <div style="color: #666;">روز</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div
+                                style="text-align: center; padding: 20px; background-color: #f8f9fa; border-radius: 8px;">
+                                <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 10px;">سایت با بیشترین
+                                    مشکل</div>
+                                <div style="font-size: 1.5rem; color: #e74c3c; margin: 15px 0;">سایت دانشکده فنی</div>
+                                <div style="color: #666;">۶ گزارش در ماه جاری</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/app.js"></script>
+    <script>
+        // بارگذاری گزارشات
+        document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(() => {
+                if (window.DashboardManager && window.DashboardManager.loadReports) {
+                    window.DashboardManager.loadReports();
+                }
+            }, 100);
+        });
+    </script>
+</body>
+
+</html>
