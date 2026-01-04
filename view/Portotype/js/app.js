@@ -358,6 +358,14 @@ class UserManager {
     return "index.html";
   }
 
+  getLoginPath() {
+    if (window.location.pathname.includes("/pages/")) {
+      return "../index.html";
+    }
+
+    return "index.html";
+  }
+
   getCurrentUser() {
     return this.currentUser;
   }
@@ -414,6 +422,9 @@ class UserManager {
 
     // گرفتن نام صفحه فعلی
     const currentPage = window.location.pathname.split("/").pop();
+    if (currentPage === "index.html" || currentPage === "login.html") {
+      return;
+    }
 
     // بررسی دسترسی
     if (!this.canAccessPage(currentPage)) {
