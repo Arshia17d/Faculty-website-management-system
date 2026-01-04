@@ -350,6 +350,14 @@ class UserManager {
     console.log("کاربر از سیستم خارج شد");
   }
 
+  getLoginPath() {
+    if (window.location.pathname.includes("/pages/")) {
+      return "../index.html";
+    }
+
+    return "index.html";
+  }
+
   getCurrentUser() {
     return this.currentUser;
   }
@@ -399,7 +407,7 @@ class UserManager {
         !window.location.pathname.includes("index.html") &&
         !window.location.pathname.includes("login.html")
       ) {
-        window.location.href = "index.html";
+        window.location.href = this.getLoginPath();
       }
       return;
     }
@@ -1255,8 +1263,9 @@ function setupLogout() {
       e.preventDefault();
       userManager.logout();
       NotificationManager.show("خروج با موفقیت انجام شد");
+      const loginPath = userManager.getLoginPath();
       setTimeout(() => {
-        window.location.href = "../index.html";
+        window.location.href = loginPath;
       }, 1000);
     });
   }
@@ -1274,18 +1283,6 @@ document.addEventListener("DOMContentLoaded", function () {
   if (sidebarMenu) {
     sidebarMenu.innerHTML = userManager.generateSidebarMenu();
 
-    // فعال کردن دکمه خروج
-    const logoutBtn = document.getElementById("logoutBtn");
-    if (logoutBtn) {
-      logoutBtn.addEventListener("click", function (e) {
-        e.preventDefault();
-        userManager.logout();
-        NotificationManager.show("خروج با موفقیت انجام شد");
-        setTimeout(() => {
-          window.location.href = "../index.html";
-        }, 1000);
-      });
-    }
 
     // علامت‌گذاری لینک فعال
     const currentPage = window.location.pathname.split("/").pop();
@@ -1297,6 +1294,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
+  setupLogout();
 
   const path = window.location.pathname;
   console.log("Current path:", path);
