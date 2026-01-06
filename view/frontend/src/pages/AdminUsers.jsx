@@ -1,13 +1,30 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import Header from "../components/Header";
+import { mockData } from "../data/mockData";
 
 export default function AdminUsers() {
   return (
-    <div className="main-content">
-      <Header title="مدیریت کاربران" />
+    <>
+      <Header
+        title="مدیریت کاربران"
+        icon="fa-users"
+        action={
+          <Link to="/admin/dashboard" className="btn btn-outline">
+            <i className="fas fa-arrow-right" /> بازگشت به داشبورد
+          </Link>
+        }
+        showDate={false}
+      />
+
       <div className="table-container">
         <div className="table-header">
-          <h3>لیست کاربران</h3>
+          <h3>
+            <i className="fas fa-users" /> لیست کاربران
+          </h3>
+          <button type="button" className="btn btn-primary">
+            <i className="fas fa-user-plus" /> افزودن کاربر
+          </button>
         </div>
         <table>
           <thead>
@@ -15,31 +32,60 @@ export default function AdminUsers() {
               <th>شناسه</th>
               <th>نام</th>
               <th>نقش</th>
+              <th>اطلاعات تکمیلی</th>
               <th>وضعیت</th>
+              <th>عملیات</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>98123456</td>
-              <td>علی محمدی</td>
-              <td>دانشجو</td>
-              <td>فعال</td>
-            </tr>
-            <tr>
-              <td>emp-1234</td>
-              <td>دکتر رضایی</td>
-              <td>استاد</td>
-              <td>فعال</td>
-            </tr>
-            <tr>
-              <td>admin-01</td>
-              <td>مدیر سیستم</td>
-              <td>ادمین</td>
-              <td>فعال</td>
-            </tr>
+            {mockData.users.map((user) => {
+              const roleBadge =
+                user.role === "admin"
+                  ? { label: "ادمین", className: "status-admin" }
+                  : user.role === "professor"
+                  ? { label: "استاد", className: "status-professor" }
+                  : { label: "دانشجو", className: "status-student" };
+
+              const extraInfo =
+                user.role === "student"
+                  ? user.faculty
+                  : user.role === "professor"
+                  ? user.department
+                  : user.accessLevel === "full"
+                  ? "دسترسی کامل"
+                  : "دسترسی محدود";
+
+              return (
+                <tr key={user.id}>
+                  <td>{user.id}</td>
+                  <td>{user.name}</td>
+                  <td>
+                    <span className={`status-badge ${roleBadge.className}`}>{roleBadge.label}</span>
+                  </td>
+                  <td>{extraInfo}</td>
+                  <td>
+                    <span
+                      className={`status-badge ${
+                        user.status === "active" ? "status-approved" : "status-rejected"
+                      }`}
+                    >
+                      {user.status === "active" ? "فعال" : "غیرفعال"}
+                    </span>
+                  </td>
+                  <td>
+                    <button type="button" className="btn btn-warning btn-sm">
+                      ویرایش
+                    </button>
+                    <button type="button" className="btn btn-danger btn-sm">
+                      غیرفعال
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
-    </div>
+    </>
   );
 }

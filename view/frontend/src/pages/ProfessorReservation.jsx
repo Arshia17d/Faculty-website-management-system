@@ -1,14 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import Header from "../components/Header";
-import SoftwarePicker from "../components/SoftwarePicker";
+import { useNotification } from "../context/NotificationContext.jsx";
+import { endTimeSlots, mockData, professorTimeSlots } from "../data/mockData";
 import { createReservation } from "../services/reservationService";
-import { fetchSoftware } from "../services/softwareService";
-
-const sites = [
-  { id: 1, name: "سایت کامپیوتر دانشکده فنی" },
-  { id: 2, name: "آزمایشگاه مهندسی نرم‌افزار" },
-  { id: 3, name: "مرکز کامپیوتر کتابخانه مرکزی" },
-];
 
 export default function ProfessorReservation({ user }) {
   const [form, setForm] = useState({
@@ -17,63 +12,79 @@ export default function ProfessorReservation({ user }) {
     startTime: "",
     endTime: "",
     purpose: "",
-    studentsCount: "",
+    studentsCount: "25",
+    software: [],
+    notes: "",
   });
-  const [softwareOptions, setSoftwareOptions] = useState([]);
-  const [selectedSoftware, setSelectedSoftware] = useState([]);
-  const [message, setMessage] = useState("");
+  const { notify } = useNotification();
 
-  useEffect(() => {
-    fetchSoftware()
-      .then(setSoftwareOptions)
-      .catch(() => {});
-  }, []);
+  const selectedSite = useMemo(
+    () => mockData.sites.find((site) => site.id === Number(form.siteId)),
+    [form.siteId]
+  );
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setMessage("");
-    const site = sites.find((item) => item.id === Number(form.siteId));
-    if (!site) return;
 
     try {
       await createReservation({
         userId: user.id,
         userName: user.name,
-        siteId: site.id,
-        siteName: site.name,
+        siteId: selectedSite?.id,
+        siteName: selectedSite?.name,
         date: form.date,
         startTime: form.startTime,
         endTime: form.endTime,
-        software: selectedSoftware.map((item) => item.name),
+        software: form.software,
         type: "professor",
         purpose: form.purpose,
         studentsCount: Number(form.studentsCount),
+        notes: form.notes,
       });
-      setMessage("رزرو سایت ثبت شد و در انتظار تایید است.");
-      setForm({ siteId: "", date: "", startTime: "", endTime: "", purpose: "", studentsCount: "" });
-      setSelectedSoftware([]);
+      notify("رزرو سایت ثبت شد و در انتظار تایید است.");
+      setForm({
+        siteId: "",
+        date: "",
+        startTime: "",
+        endTime: "",
+        purpose: "",
+        studentsCount: "25",
+        software: [],
+        notes: "",
+      });
     } catch (error) {
-      setMessage("ثبت رزرو ناموفق بود.");
+      notify("ثبت رزرو ناموفق بود.", "error");
     }
   };
 
+  const previousReservations = mockData.reservations.filter((item) => item.type === "professor");
+
   return (
-    <div className="main-content">
-      <Header title="رزرو سایت" />
+    <>
+      <Header
+        title="رزرو سایت برای کلاس"
+        icon="fa-calendar-plus"
+        action={
+          <Link to="/professor/dashboard" className="btn btn-outline">
+            <i className="fas fa-arrow-right" /> بازگشت به داشبورد
+          </Link>
+        }
+        showDate={false}
+      />
+
       <div className="form-container">
-        <h3>فرم رزرو سایت برای کلاس</h3>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="site">انتخاب سایت</label>
+            <label htmlFor="site">انتخاب سایت کامپیوتری</label>
             <select
               id="site"
               className="form-control"
+              required
               value={form.siteId}
               onChange={(event) => setForm((prev) => ({ ...prev, siteId: event.target.value }))}
-              required
             >
-              <option value="">لطفاً سایت را انتخاب کنید</option>
-              {sites.map((site) => (
+              <option value="">لطفاً یک سایت انتخاب کنید</option>
+              {mockData.sites.map((site) => (
                 <option key={site.id} value={site.id}>
                   {site.name}
                 </option>
@@ -85,82 +96,172 @@ export default function ProfessorReservation({ user }) {
             <div className="form-group">
               <label htmlFor="date">تاریخ</label>
               <input
+                type="date"
                 id="date"
                 className="form-control"
+                required
                 value={form.date}
                 onChange={(event) => setForm((prev) => ({ ...prev, date: event.target.value }))}
-                placeholder="1403/01/25"
-                required
               />
             </div>
+
             <div className="form-group">
               <label htmlFor="startTime">زمان شروع</label>
-              <input
+              <select
                 id="startTime"
                 className="form-control"
+                required
                 value={form.startTime}
                 onChange={(event) => setForm((prev) => ({ ...prev, startTime: event.target.value }))}
-                placeholder="08:00"
-                required
-              />
+              >
+                <option value="">انتخاب کنید</option>
+                {professorTimeSlots.map((slot) => (
+                  <option key={slot} value={slot}>
+                    {slot}
+                  </option>
+                ))}
+              </select>
             </div>
+
             <div className="form-group">
               <label htmlFor="endTime">زمان پایان</label>
-              <input
+              <select
                 id="endTime"
                 className="form-control"
+                required
                 value={form.endTime}
                 onChange={(event) => setForm((prev) => ({ ...prev, endTime: event.target.value }))}
-                placeholder="10:00"
-                required
-              />
+              >
+                <option value="">انتخاب کنید</option>
+                {endTimeSlots.map((slot) => (
+                  <option key={slot} value={slot}>
+                    {slot}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="purpose">هدف رزرو</label>
-              <input
-                id="purpose"
-                className="form-control"
-                value={form.purpose}
-                onChange={(event) => setForm((prev) => ({ ...prev, purpose: event.target.value }))}
-                placeholder="کلاس مبانی برنامه نویسی"
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="studentsCount">تعداد دانشجویان</label>
-              <input
-                id="studentsCount"
-                className="form-control"
-                value={form.studentsCount}
-                onChange={(event) => setForm((prev) => ({ ...prev, studentsCount: event.target.value }))}
-                placeholder="35"
-                required
-              />
-            </div>
+          <div className="form-group">
+            <label htmlFor="purpose">هدف از رزرو (نام درس)</label>
+            <input
+              type="text"
+              id="purpose"
+              className="form-control"
+              placeholder="مثال: مبانی برنامه‌نویسی"
+              required
+              value={form.purpose}
+              onChange={(event) => setForm((prev) => ({ ...prev, purpose: event.target.value }))}
+            />
           </div>
 
-          <SoftwarePicker
-            options={softwareOptions}
-            selected={selectedSoftware}
-            onAdd={(item) =>
-              setSelectedSoftware((prev) =>
-                prev.find((existing) => existing.id === item.id) ? prev : [...prev, item]
-              )
-            }
-            onRemove={(id) => setSelectedSoftware((prev) => prev.filter((item) => item.id !== id))}
-            label="نرم‌افزارهای مورد نیاز"
-          />
+          <div className="form-group">
+            <label htmlFor="studentsCount">تعداد دانشجویان</label>
+            <input
+              type="number"
+              id="studentsCount"
+              className="form-control"
+              min="1"
+              max="50"
+              required
+              value={form.studentsCount}
+              onChange={(event) => setForm((prev) => ({ ...prev, studentsCount: event.target.value }))}
+            />
+          </div>
 
-          {message && <p style={{ color: "#2c3e50", marginTop: "10px" }}>{message}</p>}
+          <div className="form-group">
+            <label htmlFor="software">نرم‌افزارهای مورد نیاز</label>
+            <select
+              id="software"
+              className="form-control"
+              multiple
+              style={{ height: "120px" }}
+              value={form.software}
+              onChange={(event) =>
+                setForm((prev) => ({
+                  ...prev,
+                  software: Array.from(event.target.selectedOptions, (option) => option.value),
+                }))
+              }
+            >
+              {mockData.softwareList.map((software) => (
+                <option key={software.id} value={software.name}>
+                  {software.name}
+                </option>
+              ))}
+            </select>
+            <small className="form-text text-muted">برای انتخاب چندگانه کلید Ctrl را نگه دارید</small>
+          </div>
 
-          <button type="submit" className="btn btn-primary" style={{ width: "100%", padding: "12px" }}>
-            ثبت رزرو
-          </button>
+          <div className="form-group">
+            <label htmlFor="notes">توضیحات اضافی (اختیاری)</label>
+            <textarea
+              id="notes"
+              className="form-control"
+              rows={3}
+              placeholder="توضیحات اضافی درباره نیازمندی‌های کلاس..."
+              value={form.notes}
+              onChange={(event) => setForm((prev) => ({ ...prev, notes: event.target.value }))}
+            />
+          </div>
+
+          <div className="form-group" style={{ marginTop: "30px" }}>
+            <button type="submit" className="btn btn-primary" style={{ width: "100%", padding: "12px" }}>
+              <i className="fas fa-paper-plane" /> ثبت درخواست رزرو
+            </button>
+          </div>
+
+          <div className="alert alert-info">
+            <i className="fas fa-info-circle" />
+            <strong>توجه:</strong> رزرو سایت پس از ثبت، نیاز به تایید ادمین سیستم دارد. پس از تایید، از طریق اعلان‌ها
+            مطلع خواهید شد.
+          </div>
         </form>
       </div>
-    </div>
+
+      <div className="table-container" style={{ marginTop: "40px" }}>
+        <div className="table-header">
+          <h3>
+            <i className="fas fa-history" /> رزروهای قبلی شما
+          </h3>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>سایت</th>
+              <th>تاریخ</th>
+              <th>زمان</th>
+              <th>هدف</th>
+              <th>وضعیت</th>
+            </tr>
+          </thead>
+          <tbody>
+            {previousReservations.map((item) => (
+              <tr key={item.id}>
+                <td>{item.siteName}</td>
+                <td>{item.date}</td>
+                <td>
+                  {item.startTime} - {item.endTime}
+                </td>
+                <td>{item.purpose ?? "-"}</td>
+                <td>
+                  <span
+                    className={`status-badge ${
+                      item.status === "approved"
+                        ? "status-approved"
+                        : item.status === "pending"
+                        ? "status-pending"
+                        : "status-rejected"
+                    }`}
+                  >
+                    {item.status === "approved" ? "تایید شده" : item.status === "pending" ? "در انتظار" : "رد شده"}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }

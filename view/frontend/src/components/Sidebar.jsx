@@ -24,20 +24,66 @@ const navConfig = {
   ],
 };
 
+const roleIcons = {
+  student: "fa-user-graduate",
+  professor: "fa-chalkboard-teacher",
+  admin: "fa-user-cog",
+};
+
 export default function Sidebar({ user, onLogout }) {
   const role = user?.role || "student";
   const items = navConfig[role] ?? [];
+
+  const renderUserInfo = () => {
+    if (role === "student") {
+      return (
+        <div className="sidebar-meta">
+          <p>
+            <strong>شماره دانشجویی:</strong> {user?.studentNumber ?? user?.id ?? "--"}
+          </p>
+          <p>
+            <strong>دانشکده:</strong> {user?.faculty ?? "مهندسی کامپیوتر"}
+          </p>
+        </div>
+      );
+    }
+
+    if (role === "professor") {
+      return (
+        <div className="sidebar-meta">
+          <p>
+            <strong>شناسه کارمندی:</strong> {user?.employeeId ?? user?.id ?? "--"}
+          </p>
+          <p>
+            <strong>دپارتمان:</strong> {user?.department ?? "علوم کامپیوتر"}
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="sidebar-meta">
+        <p>
+          <strong>سطح دسترسی:</strong> {user?.accessLevel === "full" ? "کامل" : "محدود"}
+        </p>
+        <p>
+          <strong>آخرین ورود:</strong> امروز ۱۰:۳۰
+        </p>
+      </div>
+    );
+  };
 
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
         <div className="user-info">
-          <i className={`fas ${role === "admin" ? "fa-user-cog" : "fa-user"} fa-2x`} />
+          <i className={`fas ${roleIcons[role] ?? "fa-user"} fa-2x`} />
           <div className="user-details">
             <h3>{user?.name ?? "کاربر"}</h3>
             <p>{role === "student" ? "دانشجو" : role === "professor" ? "استاد" : "ادمین"}</p>
           </div>
         </div>
+        {renderUserInfo()}
       </div>
       <nav>
         <ul className="sidebar-nav">
@@ -50,9 +96,15 @@ export default function Sidebar({ user, onLogout }) {
             </li>
           ))}
           <li>
-            <button type="button" className="btn btn-outline btn-sm" onClick={onLogout}>
+            <a
+              href="#"
+              onClick={(event) => {
+                event.preventDefault();
+                onLogout();
+              }}
+            >
               <i className="fas fa-sign-out-alt" /> خروج
-            </button>
+            </a>
           </li>
         </ul>
       </nav>

@@ -21,7 +21,7 @@ function ProtectedLayout({ user, children, onLogout }) {
   }
 
   return (
-    <div className="dashboard-layout">
+    <div className="dashboard-container">
       <Sidebar user={user} onLogout={onLogout} />
       <main className="main-content">{children}</main>
     </div>
@@ -140,7 +140,7 @@ export default function App() {
         path="/announcements"
         element={
           <ProtectedLayout user={user} onLogout={handleLogout}>
-            <Announcements />
+            <Announcements user={user} />
           </ProtectedLayout>
         }
       />
