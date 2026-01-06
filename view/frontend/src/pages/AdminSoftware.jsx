@@ -1,8 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import { useNotification } from "../context/NotificationContext.jsx";
-import { mockData } from "../data/mockData";
+import { fetchSites } from "../services/siteService";
+import { fetchSoftware } from "../services/softwareService";
 
 const tabs = [
   { id: "software-list", label: "لیست نرم‌افزارها" },
@@ -12,13 +13,38 @@ const tabs = [
 
 export default function AdminSoftware() {
   const [activeTab, setActiveTab] = useState("software-list");
-  const [selectedSoftware, setSelectedSoftware] = useState([mockData.softwareList[0], mockData.softwareList[2]]);
+  const [selectedSoftware, setSelectedSoftware] = useState([]);
+  const [softwareList, setSoftwareList] = useState([]);
+  const [sites, setSites] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const { notify } = useNotification();
 
   const currentSoftwareTags = useMemo(
     () => selectedSoftware.filter(Boolean),
     [selectedSoftware]
   );
+
+  useEffect(() => {
+    let mounted = true;
+    Promise.all([fetchSoftware(), fetchSites()])
+      .then(([softwareData, sitesData]) => {
+        if (!mounted) return;
+        setSoftwareList(Array.isArray(softwareData) ? softwareData : []);
+        setSites(Array.isArray(sitesData) ? sitesData : []);
+        setError("");
+      })
+      .catch(() => {
+        if (mounted) setError("دریافت اطلاعات نرم افزارها ناموفق بود.");
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
     <>
@@ -50,6 +76,8 @@ export default function AdminSoftware() {
 
       {activeTab === "software-list" && (
         <div className="table-container">
+          {loading && <div className="alert alert-info">در حال بارگذاری اطلاعات...</div>}
+          {error && <div className="alert alert-danger">{error}</div>}
           <div className="table-header">
             <h3>
               <i className="fas fa-boxes" /> نرم‌افزارهای موجود
@@ -70,7 +98,7 @@ export default function AdminSoftware() {
               </tr>
             </thead>
             <tbody>
-              {mockData.softwareList.map((item) => (
+              {softwareList.map((item) => (
                 <tr key={item.id}>
                   <td>{item.name}</td>
                   <td>{item.version}</td>
@@ -104,7 +132,7 @@ export default function AdminSoftware() {
                 <label htmlFor="selectSiteForDesk">انتخاب سایت</label>
                 <select id="selectSiteForDesk" className="form-control">
                   <option value="">لطفاً سایت را انتخاب کنید</option>
-                  {mockData.sites.map((site) => (
+                  {sites.map((site) => (
                     <option key={site.id} value={site.id}>
                       {site.name}
                     </option>
@@ -114,11 +142,8 @@ export default function AdminSoftware() {
 
               <div className="form-group">
                 <label htmlFor="selectDesk">انتخاب میز</label>
-                <select id="selectDesk" className="form-control" defaultValue="">
+                <select id="selectDesk" className="form-control" defaultValue="" disabled>
                   <option value="">ابتدا سایت را انتخاب کنید</option>
-                  <option value="A-12">A-12</option>
-                  <option value="B-05">B-05</option>
-                  <option value="C-08">C-08</option>
                 </select>
               </div>
             </div>
@@ -152,7 +177,7 @@ export default function AdminSoftware() {
                     defaultValue=""
                     onChange={(event) => {
                       const id = Number(event.target.value);
-                      const software = mockData.softwareList.find((item) => item.id === id);
+                      const software = softwareList.find((item) => item.id === id);
                       if (software && !selectedSoftware.some((item) => item.id === id)) {
                         setSelectedSoftware((prev) => [...prev, software]);
                       }
@@ -160,7 +185,7 @@ export default function AdminSoftware() {
                     }}
                   >
                     <option value="">نرم‌افزار را انتخاب کنید</option>
-                    {mockData.softwareList.map((software) => (
+                    {softwareList.map((software) => (
                       <option key={software.id} value={software.id}>
                         {software.name} {software.version}
                       </option>
@@ -205,54 +230,7 @@ export default function AdminSoftware() {
               </thead>
               <tbody>
                 <tr>
-                  <td>سایت دانشکده فنی</td>
-                  <td>A-12</td>
-                  <td>
-                    <span className="status-badge status-free">آزاد</span>
-                  </td>
-                  <td>
-                    <span className="software-tag">Python</span>
-                    <span className="software-tag">MATLAB</span>
-                    <span className="software-tag">VS Code</span>
-                  </td>
-                  <td>
-                    <button type="button" className="btn btn-outline btn-sm">
-                      ویرایش
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>آزمایشگاه نرم‌افزار</td>
-                  <td>B-05</td>
-                  <td>
-                    <span className="status-badge status-occupied">اشغال</span>
-                  </td>
-                  <td>
-                    <span className="software-tag">Java</span>
-                    <span className="software-tag">IntelliJ</span>
-                    <span className="software-tag">Docker</span>
-                  </td>
-                  <td>
-                    <button type="button" className="btn btn-outline btn-sm">
-                      ویرایش
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>مرکز کتابخانه</td>
-                  <td>C-08</td>
-                  <td>
-                    <span className="status-badge status-under-repair">تعمیر</span>
-                  </td>
-                  <td>
-                    <span className="software-tag">Office</span>
-                    <span className="software-tag">Python</span>
-                  </td>
-                  <td>
-                    <button type="button" className="btn btn-outline btn-sm">
-                      ویرایش
-                    </button>
-                  </td>
+                  <td colSpan={5}>اطلاعات میزها هنوز ثبت نشده است.</td>
                 </tr>
               </tbody>
             </table>
@@ -269,7 +247,7 @@ export default function AdminSoftware() {
           </div>
           <div className="content-padding">
             <div className="sites-grid">
-              {mockData.sites.map((site) => (
+              {sites.map((site) => (
                 <div key={site.id} className="site-card">
                   <div className="site-header">
                     <h3>{site.name}</h3>
