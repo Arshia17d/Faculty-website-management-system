@@ -1,14 +1,51 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import { useNotification } from "../context/NotificationContext.jsx";
-import { mockData } from "../data/mockData";
+import { fetchReports, updateReportStatus } from "../services/malfunctionService";
+import { fetchSites } from "../services/siteService";
 
 export default function AdminReports() {
   const { notify } = useNotification();
+  const [reports, setReports] = useState([]);
+  const [sites, setSites] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const handleStart = () => {
-    notify("وضعیت گزارش به روز شد");
+  useEffect(() => {
+    let mounted = true;
+    const loadData = () =>
+      Promise.all([fetchReports(), fetchSites()])
+        .then(([reportsData, sitesData]) => {
+          if (!mounted) return;
+          setReports(Array.isArray(reportsData) ? reportsData : []);
+          setSites(Array.isArray(sitesData) ? sitesData : []);
+          setError("");
+        })
+        .catch(() => {
+          if (mounted) setError("دریافت گزارش‌ها ناموفق بود.");
+        })
+        .finally(() => {
+          if (mounted) setLoading(false);
+        });
+
+    loadData();
+    const intervalId = setInterval(loadData, 15000);
+
+    return () => {
+      mounted = false;
+      clearInterval(intervalId);
+    };
+  }, []);
+
+  const handleStart = async (reportId) => {
+    try {
+      await updateReportStatus(reportId, "in-progress");
+      setReports((prev) => prev.map((report) => (report.id === reportId ? { ...report, status: "in-progress" } : report)));
+      notify("وضعیت گزارش به روز شد");
+    } catch (error) {
+      notify(error?.message || "به روز رسانی گزارش ناموفق بود.", "error");
+    }
   };
 
   return (
@@ -25,6 +62,8 @@ export default function AdminReports() {
       />
 
       <div className="table-container">
+        {loading && <div className="alert alert-info">در حال بارگذاری اطلاعات...</div>}
+        {error && <div className="alert alert-danger">{error}</div>}
         <div className="table-header">
           <h3>
             <i className="fas fa-filter" /> فیلتر گزارش‌ها
@@ -36,7 +75,7 @@ export default function AdminReports() {
               <label htmlFor="filterSite">سایت</label>
               <select id="filterSite" className="form-control">
                 <option value="">همه سایت‌ها</option>
-                {mockData.sites.map((site) => (
+                {sites.map((site) => (
                   <option key={site.id} value={site.id}>
                     {site.name}
                   </option>
@@ -101,7 +140,7 @@ export default function AdminReports() {
             </tr>
           </thead>
           <tbody>
-            {mockData.malfunctionReports.map((report) => (
+            {reports.map((report) => (
               <tr key={report.id}>
                 <td>{report.userName}</td>
                 <td>{report.siteName}</td>
@@ -139,7 +178,7 @@ export default function AdminReports() {
                   </span>
                 </td>
                 <td>
-                  <button type="button" className="btn btn-success btn-sm" onClick={handleStart}>
+                  <button type="button" className="btn btn-success btn-sm" onClick={() => handleStart(report.id)}>
                     شروع بررسی
                   </button>
                 </td>

@@ -1,5 +1,5 @@
 from app.models.user import User
-from app.services.data_store import user_from_valid_users
+from app.services.user_service import get_user, upsert_user
 
 
 def _build_dynamic_user(user_id: str, role: str | None) -> User:
@@ -32,8 +32,9 @@ def _build_dynamic_user(user_id: str, role: str | None) -> User:
 
 
 def login_user(user_id: str, role: str | None = None) -> User:
-    user = user_from_valid_users(user_id)
+    user = get_user(user_id)
     if user:
         return user
 
-    return _build_dynamic_user(user_id, role)
+    created = _build_dynamic_user(user_id, role)
+    return upsert_user(created)

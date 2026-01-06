@@ -1,9 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
-import { mockData } from "../data/mockData";
+import { fetchUsers } from "../services/userService";
 
 export default function AdminUsers() {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let mounted = true;
+    fetchUsers()
+      .then((data) => {
+        if (!mounted) return;
+        setUsers(Array.isArray(data) ? data : []);
+        setError("");
+      })
+      .catch(() => {
+        if (mounted) setError("دریافت کاربران ناموفق بود.");
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   return (
     <>
       <Header
@@ -18,6 +42,8 @@ export default function AdminUsers() {
       />
 
       <div className="table-container">
+        {loading && <div className="alert alert-info">در حال بارگذاری اطلاعات...</div>}
+        {error && <div className="alert alert-danger">{error}</div>}
         <div className="table-header">
           <h3>
             <i className="fas fa-users" /> لیست کاربران
@@ -38,7 +64,7 @@ export default function AdminUsers() {
             </tr>
           </thead>
           <tbody>
-            {mockData.users.map((user) => {
+            {users.map((user) => {
               const roleBadge =
                 user.role === "admin"
                   ? { label: "ادمین", className: "status-admin" }

@@ -1,31 +1,42 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
-import { mockData } from "../data/mockData";
+import { fetchReports } from "../services/malfunctionService";
 import { fetchReservations } from "../services/reservationService";
 
 const formatNumber = (value) => Number(value).toLocaleString("fa-IR");
 
 export default function StudentDashboard({ user }) {
-  const [reservations, setReservations] = useState(mockData.reservations);
+  const [reservations, setReservations] = useState([]);
+  const [reportsCount, setReportsCount] = useState(0);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
-    fetchReservations()
-      .then((data) => {
-        if (!mounted || !Array.isArray(data)) return;
-        setReservations(data);
-      })
-      .catch(() => {
-        if (mounted) {
-          setReservations(mockData.reservations);
-        }
-      });
+    const loadData = () =>
+      Promise.all([fetchReservations(user?.id), fetchReports(user?.id)])
+        .then(([reservationsData, reportsData]) => {
+          if (!mounted) return;
+          setReservations(Array.isArray(reservationsData) ? reservationsData : []);
+          setReportsCount(Array.isArray(reportsData) ? reportsData.length : 0);
+          setError("");
+        })
+        .catch(() => {
+          if (mounted) setError("دریافت اطلاعات داشبورد ناموفق بود.");
+        })
+        .finally(() => {
+          if (mounted) setLoading(false);
+        });
+
+    loadData();
+    const intervalId = setInterval(loadData, 15000);
 
     return () => {
       mounted = false;
+      clearInterval(intervalId);
     };
-  }, []);
+  }, [user?.id]);
 
   const userReservations = useMemo(
     () => reservations.filter((item) => item.userId === user?.id),
@@ -39,11 +50,11 @@ export default function StudentDashboard({ user }) {
   }, [userReservations]);
 
   const recent = userReservations.slice(0, 5);
-  const reportsCount = mockData.malfunctionReports.filter((report) => report.userId === user?.id).length;
-
   return (
     <>
       <Header title="داشبورد دانشجو" icon="fa-home" />
+      {loading && <div className="alert alert-info">در حال بارگذاری اطلاعات...</div>}
+      {error && <div className="alert alert-danger">{error}</div>}
 
       <div className="stats-cards">
         <div className="stat-card">
@@ -81,7 +92,7 @@ export default function StudentDashboard({ user }) {
             <i className="fas fa-exclamation-circle" />
           </div>
           <div className="stat-info">
-            <h3>{formatNumber(reportsCount || 2)}</h3>
+            <h3>{formatNumber(reportsCount)}</h3>
             <p>گزارش خرابی</p>
           </div>
         </div>

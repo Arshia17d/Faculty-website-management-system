@@ -1,29 +1,45 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
-import { mockData } from "../data/mockData";
+import { fetchReports } from "../services/malfunctionService";
 import { fetchReservations } from "../services/reservationService";
+import { fetchSites } from "../services/siteService";
 
 const formatNumber = (value) => Number(value).toLocaleString("fa-IR");
 
 export default function ProfessorDashboard({ user }) {
-  const [reservations, setReservations] = useState(mockData.reservations);
+  const [reservations, setReservations] = useState([]);
+  const [sites, setSites] = useState([]);
+  const [reportsCount, setReportsCount] = useState(0);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
-    fetchReservations()
-      .then((data) => {
-        if (!mounted || !Array.isArray(data)) return;
-        setReservations(data);
-      })
-      .catch(() => {
-        if (mounted) setReservations(mockData.reservations);
-      });
+    const loadData = () =>
+      Promise.all([fetchReservations(user?.id), fetchSites(), fetchReports(user?.id)])
+        .then(([reservationsData, sitesData, reportsData]) => {
+          if (!mounted) return;
+          setReservations(Array.isArray(reservationsData) ? reservationsData : []);
+          setSites(Array.isArray(sitesData) ? sitesData : []);
+          setReportsCount(Array.isArray(reportsData) ? reportsData.length : 0);
+          setError("");
+        })
+        .catch(() => {
+          if (mounted) setError("دریافت اطلاعات داشبورد ناموفق بود.");
+        })
+        .finally(() => {
+          if (mounted) setLoading(false);
+        });
+
+    loadData();
+    const intervalId = setInterval(loadData, 15000);
 
     return () => {
       mounted = false;
+      clearInterval(intervalId);
     };
-  }, []);
+  }, [user?.id]);
 
   const userReservations = useMemo(
     () => reservations.filter((item) => item.userId === user?.id),
@@ -31,11 +47,14 @@ export default function ProfessorDashboard({ user }) {
   );
   const approved = userReservations.filter((item) => item.status === "approved").length;
   const pending = userReservations.filter((item) => item.status === "pending").length;
+  const totalStudents = userReservations.reduce((sum, item) => sum + (item.studentsCount ?? 0), 0);
   const recent = userReservations.slice(0, 5);
 
   return (
     <>
       <Header title="داشبورد استاد" icon="fa-home" />
+      {loading && <div className="alert alert-info">در حال بارگذاری اطلاعات...</div>}
+      {error && <div className="alert alert-danger">{error}</div>}
 
       <div className="stats-cards">
         <div className="stat-card">
@@ -63,7 +82,7 @@ export default function ProfessorDashboard({ user }) {
             <i className="fas fa-users" />
           </div>
           <div className="stat-info">
-            <h3>{formatNumber(127)}</h3>
+            <h3>{formatNumber(totalStudents)}</h3>
             <p>تعداد دانشجویان</p>
           </div>
         </div>
@@ -73,7 +92,7 @@ export default function ProfessorDashboard({ user }) {
             <i className="fas fa-exclamation-circle" />
           </div>
           <div className="stat-info">
-            <h3>{formatNumber(3)}</h3>
+            <h3>{formatNumber(reportsCount)}</h3>
             <p>گزارش خرابی</p>
           </div>
         </div>
@@ -144,7 +163,7 @@ export default function ProfessorDashboard({ user }) {
         </div>
         <div className="content-padding">
           <div className="sites-grid">
-            {mockData.sites.map((site) => (
+            {sites.map((site) => (
               <div key={site.id} className="site-card fade-in">
                 <div className="site-header">
                   <h3>{site.name}</h3>

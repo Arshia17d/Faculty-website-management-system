@@ -1,9 +1,11 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import { useNotification } from "../context/NotificationContext.jsx";
-import { mockData, timeSlots } from "../data/mockData";
+import { timeSlots } from "../data/timeSlots";
 import { createReservation } from "../services/reservationService";
+import { fetchSites } from "../services/siteService";
+import { fetchSoftware } from "../services/softwareService";
 
 const durationOptions = [1, 2, 3, 4];
 
@@ -16,12 +18,38 @@ export default function StudentReservation({ user }) {
     software: [],
     purpose: "",
   });
+  const [sites, setSites] = useState([]);
+  const [softwareList, setSoftwareList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const { notify } = useNotification();
 
   const selectedSite = useMemo(
-    () => mockData.sites.find((site) => site.id === Number(form.siteId)),
-    [form.siteId]
+    () => sites.find((site) => site.id === Number(form.siteId)),
+    [form.siteId, sites]
   );
+
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    Promise.all([fetchSites(), fetchSoftware()])
+      .then(([sitesData, softwareData]) => {
+        if (!mounted) return;
+        setSites(sitesData);
+        setSoftwareList(softwareData);
+        setError("");
+      })
+      .catch(() => {
+        if (mounted) setError("دریافت اطلاعات سایت‌ها ناموفق بود.");
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -29,6 +57,11 @@ export default function StudentReservation({ user }) {
     const duration = Number(form.duration);
     const startIndex = timeSlots.indexOf(form.startTime);
     const endTime = startIndex >= 0 ? timeSlots[startIndex + duration] ?? form.startTime : form.startTime;
+
+    if (!selectedSite) {
+      notify("لطفاً یک سایت معتبر انتخاب کنید.", "error");
+      return;
+    }
 
     try {
       await createReservation({
@@ -46,7 +79,7 @@ export default function StudentReservation({ user }) {
       notify("رزرو با موفقیت ثبت شد و در انتظار تایید است.");
       setForm({ siteId: "", date: "", startTime: "", duration: "2", software: [], purpose: "" });
     } catch (error) {
-      notify("ثبت رزرو ناموفق بود.", "error");
+      notify(error?.message || "ثبت رزرو ناموفق بود.", "error");
     }
   };
 
@@ -65,6 +98,8 @@ export default function StudentReservation({ user }) {
 
       <div className="form-container">
         <form onSubmit={handleSubmit}>
+          {loading && <div className="alert alert-info">در حال بارگذاری اطلاعات...</div>}
+          {error && <div className="alert alert-danger">{error}</div>}
           <div className="form-group">
             <label htmlFor="site">انتخاب سایت کامپیوتری</label>
             <select
@@ -72,10 +107,11 @@ export default function StudentReservation({ user }) {
               className="form-control"
               required
               value={form.siteId}
+              disabled={loading}
               onChange={(event) => setForm((prev) => ({ ...prev, siteId: event.target.value }))}
             >
               <option value="">لطفاً یک سایت انتخاب کنید</option>
-              {mockData.sites.map((site) => (
+              {sites.map((site) => (
                 <option key={site.id} value={site.id}>
                   {site.name}
                 </option>
@@ -103,6 +139,7 @@ export default function StudentReservation({ user }) {
                 className="form-control"
                 required
                 value={form.startTime}
+                disabled={loading}
                 onChange={(event) => setForm((prev) => ({ ...prev, startTime: event.target.value }))}
               >
                 <option value="">انتخاب کنید</option>
@@ -136,18 +173,19 @@ export default function StudentReservation({ user }) {
             <label htmlFor="software">نرم‌افزارهای مورد نیاز</label>
             <select
               id="software"
-              className="form-control"
-              multiple
-              style={{ height: "120px" }}
-              value={form.software}
-              onChange={(event) =>
-                setForm((prev) => ({
-                  ...prev,
-                  software: Array.from(event.target.selectedOptions, (option) => option.value),
-                }))
-              }
-            >
-              {mockData.softwareList.map((software) => (
+                className="form-control"
+                multiple
+                style={{ height: "120px" }}
+                value={form.software}
+                disabled={loading}
+                onChange={(event) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    software: Array.from(event.target.selectedOptions, (option) => option.value),
+                  }))
+                }
+              >
+              {softwareList.map((software) => (
                 <option key={software.id} value={software.name}>
                   {software.name}
                 </option>
@@ -194,7 +232,7 @@ export default function StudentReservation({ user }) {
         </div>
         <div className="content-padding">
           <div className="sites-grid">
-            {mockData.sites.map((site) => (
+            {sites.map((site) => (
               <div key={site.id} className="site-card fade-in">
                 <div className="site-header">
                   <h3>{site.name}</h3>

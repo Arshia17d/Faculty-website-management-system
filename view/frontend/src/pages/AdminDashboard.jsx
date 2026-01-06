@@ -2,47 +2,73 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import { useNotification } from "../context/NotificationContext.jsx";
-import { mockData } from "../data/mockData";
-import { fetchReservations } from "../services/reservationService";
+import { fetchReports } from "../services/malfunctionService";
+import { fetchReservations, updateReservationStatus } from "../services/reservationService";
+import { fetchSites } from "../services/siteService";
 
 const formatNumber = (value) => Number(value).toLocaleString("fa-IR");
 
 export default function AdminDashboard() {
-  const [reservations, setReservations] = useState(mockData.reservations);
+  const [reservations, setReservations] = useState([]);
+  const [sites, setSites] = useState([]);
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const { notify } = useNotification();
 
   useEffect(() => {
     let mounted = true;
-    fetchReservations()
-      .then((data) => {
-        if (!mounted || !Array.isArray(data)) return;
-        setReservations(data);
-      })
-      .catch(() => {
-        if (mounted) setReservations(mockData.reservations);
-      });
+    const loadData = () =>
+      Promise.all([fetchReservations(), fetchSites(), fetchReports()])
+        .then(([reservationsData, sitesData, reportsData]) => {
+          if (!mounted) return;
+          setReservations(Array.isArray(reservationsData) ? reservationsData : []);
+          setSites(Array.isArray(sitesData) ? sitesData : []);
+          setReports(Array.isArray(reportsData) ? reportsData : []);
+          setError("");
+        })
+        .catch(() => {
+          if (mounted) setError("دریافت اطلاعات مدیریت ناموفق بود.");
+        })
+        .finally(() => {
+          if (mounted) setLoading(false);
+        });
+
+    loadData();
+    const intervalId = setInterval(loadData, 15000);
 
     return () => {
       mounted = false;
+      clearInterval(intervalId);
     };
   }, []);
 
   const pendingReservations = reservations.filter((item) => item.status === "pending");
 
   const stats = useMemo(() => {
-    const totalDesks = mockData.sites.reduce((sum, site) => sum + site.totalDesks, 0);
-    const freeDesks = mockData.sites.reduce((sum, site) => sum + site.freeDesks, 0);
-    const openReports = mockData.malfunctionReports.filter((report) => report.status === "pending").length;
+    const totalDesks = sites.reduce((sum, site) => sum + site.totalDesks, 0);
+    const freeDesks = sites.reduce((sum, site) => sum + site.freeDesks, 0);
+    const openReports = reports.filter((report) => report.status === "pending").length;
     return { totalDesks, freeDesks, openReports };
-  }, []);
+  }, [reports, sites]);
 
-  const handleReservationAction = (actionLabel) => {
-    notify(actionLabel);
+  const handleReservationAction = async (reservationId, status, actionLabel) => {
+    try {
+      await updateReservationStatus(reservationId, status);
+      setReservations((prev) =>
+        prev.map((item) => (item.id === reservationId ? { ...item, status } : item))
+      );
+      notify(actionLabel);
+    } catch (error) {
+      notify(error?.message || "به روز رسانی رزرو ناموفق بود.", "error");
+    }
   };
 
   return (
     <>
       <Header title="داشبورد مدیریت سیستم" icon="fa-home" />
+      {loading && <div className="alert alert-info">در حال بارگذاری اطلاعات...</div>}
+      {error && <div className="alert alert-danger">{error}</div>}
 
       <div className="stats-cards">
         <div className="stat-card">
@@ -102,7 +128,7 @@ export default function AdminDashboard() {
         </div>
         <div className="content-padding">
           <div className="sites-grid">
-            {mockData.sites.map((site) => (
+            {sites.map((site) => (
               <div key={site.id} className="site-card fade-in">
                 <div className="site-header">
                   <h3>{site.name}</h3>
@@ -195,14 +221,14 @@ export default function AdminDashboard() {
                     <button
                       type="button"
                       className="btn btn-success btn-sm"
-                      onClick={() => handleReservationAction("رزرو با موفقیت تایید شد")}
+                      onClick={() => handleReservationAction(item.id, "approved", "رزرو با موفقیت تایید شد")}
                     >
                       تایید
                     </button>
                     <button
                       type="button"
                       className="btn btn-danger btn-sm"
-                      onClick={() => handleReservationAction("رزرو رد شد")}
+                      onClick={() => handleReservationAction(item.id, "rejected", "رزرو رد شد")}
                     >
                       رد
                     </button>
@@ -235,7 +261,7 @@ export default function AdminDashboard() {
             </tr>
           </thead>
           <tbody>
-            {mockData.malfunctionReports.map((report) => (
+            {reports.map((report) => (
               <tr key={report.id}>
                 <td>{report.userName}</td>
                 <td>{report.siteName}</td>
