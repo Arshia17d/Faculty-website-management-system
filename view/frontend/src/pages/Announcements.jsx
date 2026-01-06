@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import { useNotification } from "../context/NotificationContext.jsx";
-import { mockData } from "../data/mockData";
+import { createAnnouncement, fetchAnnouncements } from "../services/announcementService";
 
 const priorityLabels = {
   high: "بالا",
@@ -12,12 +12,48 @@ const priorityLabels = {
 export default function Announcements({ user }) {
   const { notify } = useNotification();
   const [form, setForm] = useState({ title: "", content: "", priority: "medium" });
+  const [announcements, setAnnouncements] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const isAdmin = user?.role === "admin";
 
-  const handleSubmit = (event) => {
+  useEffect(() => {
+    let mounted = true;
+    fetchAnnouncements()
+      .then((data) => {
+        if (!mounted) return;
+        setAnnouncements(Array.isArray(data) ? data : []);
+        setError("");
+      })
+      .catch(() => {
+        if (mounted) setError("دریافت اعلان‌ها ناموفق بود.");
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    notify("اعلان با موفقیت ایجاد شد");
-    setForm({ title: "", content: "", priority: "medium" });
+    try {
+      const payload = {
+        title: form.title,
+        content: form.content,
+        priority: form.priority,
+        createdBy: user?.name ?? "ادمین",
+        date: new Date().toLocaleDateString("fa-IR"),
+      };
+      const created = await createAnnouncement(payload);
+      setAnnouncements((prev) => [created, ...prev]);
+      notify("اعلان با موفقیت ایجاد شد");
+      setForm({ title: "", content: "", priority: "medium" });
+    } catch (error) {
+      notify(error?.message || "ثبت اعلان ناموفق بود.", "error");
+    }
   };
 
   return (
@@ -70,7 +106,9 @@ export default function Announcements({ user }) {
       )}
 
       <div className="announcements-list">
-        {mockData.announcements.map((announcement) => (
+        {loading && <div className="alert alert-info">در حال بارگذاری اعلان‌ها...</div>}
+        {error && <div className="alert alert-danger">{error}</div>}
+        {announcements.map((announcement) => (
           <div key={announcement.id} className="announcement-card fade-in">
             <div className="announcement-header">
               <h4>{announcement.title}</h4>

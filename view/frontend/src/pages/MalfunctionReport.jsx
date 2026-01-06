@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import { useNotification } from "../context/NotificationContext.jsx";
-import { mockData } from "../data/mockData";
+import { createReport } from "../services/malfunctionService";
+import { fetchSites } from "../services/siteService";
 
 export default function MalfunctionReport({ user }) {
   const [form, setForm] = useState({
@@ -14,6 +15,9 @@ export default function MalfunctionReport({ user }) {
     recurring: "no",
     contact: "",
   });
+  const [sites, setSites] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const { notify } = useNotification();
   const dashboardPath =
     user?.role === "admin"
@@ -22,18 +26,59 @@ export default function MalfunctionReport({ user }) {
       ? "/professor/dashboard"
       : "/student/dashboard";
 
-  const handleSubmit = (event) => {
+  useEffect(() => {
+    let mounted = true;
+    fetchSites()
+      .then((data) => {
+        if (!mounted) return;
+        setSites(Array.isArray(data) ? data : []);
+        setError("");
+      })
+      .catch(() => {
+        if (mounted) setError("دریافت سایت‌ها ناموفق بود.");
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    notify("گزارش خرابی با موفقیت ثبت شد.");
-    setForm({
-      siteId: "",
-      deskId: "",
-      problemType: "",
-      priority: "medium",
-      description: "",
-      recurring: "no",
-      contact: "",
-    });
+    const selectedSite = sites.find((site) => site.id === Number(form.siteId));
+    if (!selectedSite) {
+      notify("لطفاً یک سایت معتبر انتخاب کنید.", "error");
+      return;
+    }
+
+    try {
+      await createReport({
+        userId: user.id,
+        userName: user.name,
+        siteId: selectedSite.id,
+        siteName: selectedSite.name,
+        deskId: form.deskId || null,
+        description: form.description,
+        priority: form.priority,
+        date: new Date().toLocaleDateString("fa-IR"),
+        contact: form.contact,
+      });
+      notify("گزارش خرابی با موفقیت ثبت شد.");
+      setForm({
+        siteId: "",
+        deskId: "",
+        problemType: "",
+        priority: "medium",
+        description: "",
+        recurring: "no",
+        contact: "",
+      });
+    } catch (error) {
+      notify(error?.message || "ثبت گزارش ناموفق بود.", "error");
+    }
   };
 
   return (
@@ -51,6 +96,8 @@ export default function MalfunctionReport({ user }) {
 
       <div className="form-container">
         <form onSubmit={handleSubmit}>
+          {loading && <div className="alert alert-info">در حال بارگذاری اطلاعات...</div>}
+          {error && <div className="alert alert-danger">{error}</div>}
           <div className="form-group">
             <label htmlFor="site">سایت کامپیوتری</label>
             <select
@@ -58,10 +105,11 @@ export default function MalfunctionReport({ user }) {
               className="form-control"
               required
               value={form.siteId}
+              disabled={loading}
               onChange={(event) => setForm((prev) => ({ ...prev, siteId: event.target.value }))}
             >
               <option value="">لطفاً سایت را انتخاب کنید</option>
-              {mockData.sites.map((site) => (
+              {sites.map((site) => (
                 <option key={site.id} value={site.id}>
                   {site.name}
                 </option>
