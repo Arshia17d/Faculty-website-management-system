@@ -1,53 +1,76 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import { useNotification } from "../context/NotificationContext.jsx";
-import { mockData } from "../data/mockData";
-
-const extraReservations = [
-  {
-    id: "RES-1003",
-    userName: "فاطمه کریمی (98234567)",
-    siteName: "آزمایشگاه نرم‌افزار",
-    date: "1403/01/20",
-    time: "10:00 - 12:00",
-    type: "رزرو میز",
-    status: "approved",
-  },
-  {
-    id: "RES-1004",
-    userName: "دکتر حسینی (emp-5678)",
-    siteName: "مرکز کتابخانه",
-    date: "1403/01/18",
-    time: "14:00 - 16:00",
-    type: "رزرو سایت",
-    status: "rejected",
-  },
-  {
-    id: "RES-1005",
-    userName: "محمد احمدی (98345678)",
-    siteName: "سایت دانشکده فنی",
-    date: "1403/01/19",
-    time: "16:00 - 18:00",
-    type: "رزرو میز",
-    status: "approved",
-  },
-];
+import { fetchReservations, updateReservationStatus } from "../services/reservationService";
+import { fetchSites } from "../services/siteService";
 
 export default function AdminReservations() {
   const { notify } = useNotification();
+  const [reservations, setReservations] = useState([]);
+  const [sites, setSites] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const pendingReservations = mockData.reservations.map((item, index) => ({
-    id: `RES-100${index + 1}`,
-    userName: `${item.userName} (${item.userId})`,
-    siteName: item.siteName,
-    date: item.date,
-    time: `${item.startTime} - ${item.endTime}`,
-    type: item.type === "student" ? "رزرو میز" : "رزرو سایت",
-    status: item.status,
-  }));
+  useEffect(() => {
+    let mounted = true;
+    const loadData = () =>
+      Promise.all([fetchReservations(), fetchSites()])
+        .then(([reservationsData, sitesData]) => {
+          if (!mounted) return;
+          setReservations(Array.isArray(reservationsData) ? reservationsData : []);
+          setSites(Array.isArray(sitesData) ? sitesData : []);
+          setError("");
+        })
+        .catch(() => {
+          if (mounted) setError("دریافت رزروها ناموفق بود.");
+        })
+        .finally(() => {
+          if (mounted) setLoading(false);
+        });
 
-  const allReservations = [...pendingReservations, ...extraReservations];
+    loadData();
+    const intervalId = setInterval(loadData, 15000);
+
+    return () => {
+      mounted = false;
+      clearInterval(intervalId);
+    };
+  }, []);
+
+  const allReservations = useMemo(
+    () =>
+      reservations.map((item) => ({
+        id: item.id,
+        userName: `${item.userName} (${item.userId})`,
+        siteName: item.siteName,
+        date: item.date,
+        time: `${item.startTime} - ${item.endTime}`,
+        type: item.type === "student" ? "رزرو میز" : "رزرو سایت",
+        status: item.status,
+      })),
+    [reservations]
+  );
+
+  const handleUpdateStatus = async (reservationId, status, message) => {
+    try {
+      await updateReservationStatus(reservationId, status);
+      setReservations((prev) =>
+        prev.map((item) => (item.id === reservationId ? { ...item, status } : item))
+      );
+      notify(message);
+    } catch (error) {
+      notify(error?.message || "به روز رسانی رزرو ناموفق بود.", "error");
+    }
+  };
+
+  const stats = useMemo(() => {
+    const total = reservations.length;
+    const pending = reservations.filter((item) => item.status === "pending").length;
+    const approved = reservations.filter((item) => item.status === "approved").length;
+    const rejected = reservations.filter((item) => item.status === "rejected").length;
+    return { total, pending, approved, rejected };
+  }, [reservations]);
 
   return (
     <>
@@ -63,6 +86,8 @@ export default function AdminReservations() {
       />
 
       <div className="table-container">
+        {loading && <div className="alert alert-info">در حال بارگذاری اطلاعات...</div>}
+        {error && <div className="alert alert-danger">{error}</div>}
         <div className="table-header">
           <h3>
             <i className="fas fa-filter" /> فیلتر رزروها
@@ -74,7 +99,7 @@ export default function AdminReservations() {
               <label htmlFor="filterSite">سایت</label>
               <select id="filterSite" className="form-control">
                 <option value="">همه سایت‌ها</option>
-                {mockData.sites.map((site) => (
+                {sites.map((site) => (
                   <option key={site.id} value={site.id}>
                     {site.name}
                   </option>
@@ -171,21 +196,25 @@ export default function AdminReservations() {
                       <button
                         type="button"
                         className="btn btn-success btn-sm"
-                        onClick={() => notify("رزرو با موفقیت تایید شد")}
+                        onClick={() => handleUpdateStatus(item.id, "approved", "رزرو با موفقیت تایید شد")}
                       >
                         تایید
                       </button>
                       <button
                         type="button"
                         className="btn btn-danger btn-sm"
-                        onClick={() => notify("رزرو رد شد", "warning")}
+                        onClick={() => handleUpdateStatus(item.id, "rejected", "رزرو رد شد")}
                       >
                         رد
                       </button>
                     </>
                   )}
                   {item.status === "approved" && (
-                    <button type="button" className="btn btn-warning btn-sm">
+                    <button
+                      type="button"
+                      className="btn btn-warning btn-sm"
+                      onClick={() => handleUpdateStatus(item.id, "cancelled", "رزرو لغو شد")}
+                    >
                       لغو
                     </button>
                   )}
@@ -230,28 +259,28 @@ export default function AdminReservations() {
           <div className="form-row">
             <div className="stat-summary">
               <div className="stat-value" style={{ color: "#3498db" }}>
-                ۱۵
+                {stats.total}
               </div>
               <div className="stat-label">رزرو امروز</div>
             </div>
 
             <div className="stat-summary">
               <div className="stat-value" style={{ color: "#27ae60" }}>
-                ۴۲
+                {stats.approved}
               </div>
               <div className="stat-label">رزرو این هفته</div>
             </div>
 
             <div className="stat-summary">
               <div className="stat-value" style={{ color: "#f39c12" }}>
-                ۱۲۳
+                {stats.rejected}
               </div>
               <div className="stat-label">رزرو این ماه</div>
             </div>
 
             <div className="stat-summary">
               <div className="stat-value" style={{ color: "#e74c3c" }}>
-                ۵
+                {stats.pending}
               </div>
               <div className="stat-label">در انتظار تایید</div>
             </div>
