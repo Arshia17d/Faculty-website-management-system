@@ -1,10 +1,21 @@
 import React, { useState } from "react";
+import { useNotification } from "../context/NotificationContext.jsx";
 import { login } from "../services/authService";
 
+const roleOptions = [
+  { value: "student", label: "دانشجو", icon: "fa-user-graduate" },
+  { value: "professor", label: "استاد", icon: "fa-chalkboard-teacher" },
+  { value: "admin", label: "ادمین", icon: "fa-user-cog" },
+];
+
 export default function Login({ onSuccess }) {
-  const [form, setForm] = useState({ userId: "", password: "", role: "student" });
-  const [error, setError] = useState("");
+  const [form, setForm] = useState({
+    userId: "98123456",
+    password: "123456",
+    role: "student",
+  });
   const [loading, setLoading] = useState(false);
+  const { notify } = useNotification();
 
   const handleChange = (field) => (value) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -12,7 +23,6 @@ export default function Login({ onSuccess }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setError("");
     setLoading(true);
     try {
       const user = await login({
@@ -20,9 +30,10 @@ export default function Login({ onSuccess }) {
         password: form.password,
         role: form.role,
       });
+      notify("ورود با موفقیت انجام شد");
       onSuccess(user);
     } catch (err) {
-      setError("ورود انجام نشد. اطلاعات را بررسی کنید.");
+      notify("ورود انجام نشد. اطلاعات را بررسی کنید.", "error");
     } finally {
       setLoading(false);
     }
@@ -38,6 +49,22 @@ export default function Login({ onSuccess }) {
         </div>
 
         <form className="login-form" onSubmit={handleSubmit}>
+          <input type="hidden" value={form.role} readOnly />
+
+          <div className="role-selector">
+            {roleOptions.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                className={`role-option ${form.role === option.value ? "selected" : ""}`}
+                onClick={() => handleChange("role")(option.value)}
+              >
+                <i className={`fas ${option.icon}`} />
+                <p>{option.label}</p>
+              </button>
+            ))}
+          </div>
+
           <div className="form-group">
             <label htmlFor="userId">
               <i className="fas fa-user" /> شناسه کاربری
@@ -68,25 +95,17 @@ export default function Login({ onSuccess }) {
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="role">نوع کاربر</label>
-            <select
-              id="role"
-              className="form-control"
-              value={form.role}
-              onChange={(event) => handleChange("role")(event.target.value)}
-            >
-              <option value="student">دانشجو</option>
-              <option value="professor">استاد</option>
-              <option value="admin">ادمین</option>
-            </select>
-          </div>
-
-          {error && <p style={{ color: "#e74c3c" }}>{error}</p>}
-
           <button type="submit" className="btn btn-primary" style={{ width: "100%", padding: "12px" }}>
             {loading ? "در حال ورود..." : "ورود به سیستم"}
           </button>
+
+          <div className="login-sample">
+            <p>
+              <strong>کاربران نمونه:</strong>
+            </p>
+            <p>دانشجو: 98123456 | استاد: emp-1234 | ادمین: admin-01</p>
+            <p>رمز عبور: هر چیزی (در نسخه دمو مهم نیست)</p>
+          </div>
         </form>
       </div>
     </div>
