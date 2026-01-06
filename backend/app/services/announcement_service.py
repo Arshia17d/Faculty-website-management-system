@@ -4,7 +4,8 @@ from app.services.database import get_connection
 
 def list_announcements() -> list[Announcement]:
     connection = get_connection()
-    rows = connection.execute("SELECT * FROM announcements ORDER BY date DESC, id DESC").fetchall()
+    rows = connection.execute(
+        "SELECT * FROM announcements ORDER BY date DESC, id DESC").fetchall()
     connection.close()
     return [
         Announcement(
@@ -23,10 +24,10 @@ def create_announcement(payload: AnnouncementCreate) -> Announcement:
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute(
-        \"\"\"
+        """
         INSERT INTO announcements (title, content, priority, date, created_by)
         VALUES (?, ?, ?, ?, ?)
-        \"\"\",
+        """,
         (
             payload.title,
             payload.content,
