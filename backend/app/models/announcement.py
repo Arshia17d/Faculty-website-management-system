@@ -8,6 +8,7 @@ class Announcement(BaseModel):
     priority: str
     date: str
     created_by: str = Field(alias="createdBy")
+    category: str = "general"
 
     class Config:
         populate_by_name = True
@@ -20,6 +21,7 @@ class AnnouncementCreate(BaseModel):
     priority: str
     date: str
     created_by: str = Field(alias="createdBy")
+    category: str = "general"
 
     class Config:
         populate_by_name = True

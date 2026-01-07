@@ -70,7 +70,8 @@ def init_db() -> None:
             content TEXT NOT NULL,
             priority TEXT NOT NULL,
             date TEXT NOT NULL,
-            created_by TEXT NOT NULL
+            created_by TEXT NOT NULL,
+            category TEXT NOT NULL DEFAULT 'general'
         )
         """
     )
@@ -111,10 +112,47 @@ def init_db() -> None:
         )
         """
     )
+
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS desks (
+            id INTEGER PRIMARY KEY,
+            site_id INTEGER NOT NULL,
+            label TEXT NOT NULL,
+            status TEXT NOT NULL,
+            UNIQUE(site_id, label)
+        )
+        """
+    )
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS desk_software (
+            desk_id INTEGER NOT NULL,
+            software_id INTEGER NOT NULL,
+            PRIMARY KEY (desk_id, software_id),
+            FOREIGN KEY (desk_id) REFERENCES desks(id) ON DELETE CASCADE,
+            FOREIGN KEY (software_id) REFERENCES software(id) ON DELETE CASCADE
+        )
+        """
+    )
+
     connection.commit()
 
+    _apply_schema_updates(connection)
     _seed_if_needed(connection)
     connection.close()
+
+
+def _apply_schema_updates(connection: sqlite3.Connection) -> None:
+    if not _column_exists(connection, "announcements", "category"):
+        connection.execute(
+            "ALTER TABLE announcements ADD COLUMN category TEXT NOT NULL DEFAULT 'general'")
+        connection.commit()
+
+
+def _column_exists(connection: sqlite3.Connection, table: str, column: str) -> bool:
+    rows = connection.execute(f"PRAGMA table_info({table})").fetchall()
+    return any(row["name"] == column for row in rows)
 
 
 def _table_is_empty(connection: sqlite3.Connection, table: str) -> bool:
@@ -135,6 +173,8 @@ def _seed_if_needed(connection: sqlite3.Connection) -> None:
         _seed_reservations(connection)
     if _table_is_empty(connection, "malfunction_reports"):
         _seed_malfunction_reports(connection)
+    if _table_is_empty(connection, "desks"):
+        _seed_desks(connection)
     connection.commit()
 
 
@@ -191,14 +231,22 @@ def _seed_sites(connection: sqlite3.Connection) -> None:
 
 def _seed_software(connection: sqlite3.Connection) -> None:
     software_list = [
-        {"id": 1, "name": "Python", "version": "3.11", "license_key": "PYT-2023-001", "installed_at": "1402/12/10", "desks_count": 32},
-        {"id": 2, "name": "MATLAB", "version": "R2022b", "license_key": "MAT-2022-045", "installed_at": "1402/11/05", "desks_count": 20},
-        {"id": 3, "name": "VS Code", "version": "1.78", "license_key": "FREE", "installed_at": "1402/10/15", "desks_count": 40},
-        {"id": 4, "name": "Office", "version": "2021", "license_key": "OFF-2021-123", "installed_at": "1402/08/20", "desks_count": 38},
-        {"id": 5, "name": "Java", "version": "JDK 17", "license_key": "JAVA-17-001", "installed_at": "1402/09/22", "desks_count": 18},
-        {"id": 6, "name": "IntelliJ", "version": "2023.1", "license_key": "INT-2023-012", "installed_at": "1402/09/25", "desks_count": 12},
-        {"id": 7, "name": "Docker", "version": "24.0", "license_key": "DOCK-24-001", "installed_at": "1402/07/12", "desks_count": 10},
-        {"id": 8, "name": "PostgreSQL", "version": "15", "license_key": "POST-15-001", "installed_at": "1402/06/30", "desks_count": 16},
+        {"id": 1, "name": "Python", "version": "3.11", "license_key": "PYT-2023-001",
+            "installed_at": "1402/12/10", "desks_count": 32},
+        {"id": 2, "name": "MATLAB", "version": "R2022b", "license_key": "MAT-2022-045",
+            "installed_at": "1402/11/05", "desks_count": 20},
+        {"id": 3, "name": "VS Code", "version": "1.78", "license_key": "FREE",
+            "installed_at": "1402/10/15", "desks_count": 40},
+        {"id": 4, "name": "Office", "version": "2021", "license_key": "OFF-2021-123",
+            "installed_at": "1402/08/20", "desks_count": 38},
+        {"id": 5, "name": "Java", "version": "JDK 17", "license_key": "JAVA-17-001",
+            "installed_at": "1402/09/22", "desks_count": 18},
+        {"id": 6, "name": "IntelliJ", "version": "2023.1", "license_key": "INT-2023-012",
+            "installed_at": "1402/09/25", "desks_count": 12},
+        {"id": 7, "name": "Docker", "version": "24.0", "license_key": "DOCK-24-001",
+            "installed_at": "1402/07/12", "desks_count": 10},
+        {"id": 8, "name": "PostgreSQL", "version": "15", "license_key": "POST-15-001",
+            "installed_at": "1402/06/30", "desks_count": 16},
     ]
     connection.executemany(
         """
@@ -218,6 +266,7 @@ def _seed_announcements(connection: sqlite3.Connection) -> None:
             "priority": "high",
             "date": "1403/01/20",
             "created_by": "ادمین سیستم",
+            "category": "maintenance",
         },
         {
             "id": 2,
@@ -226,6 +275,7 @@ def _seed_announcements(connection: sqlite3.Connection) -> None:
             "priority": "medium",
             "date": "1403/01/18",
             "created_by": "ادمین سیستم",
+            "category": "software",
         },
         {
             "id": 3,
@@ -238,8 +288,8 @@ def _seed_announcements(connection: sqlite3.Connection) -> None:
     ]
     connection.executemany(
         """
-        INSERT INTO announcements (id, title, content, priority, date, created_by)
-        VALUES (:id, :title, :content, :priority, :date, :created_by)
+        INSERT INTO announcements (id, title, content, priority, date, created_by, category)
+        VALUES (:id, :title, :content, :priority, :date, :created_by, :category
         """,
         announcements,
     )
@@ -398,3 +448,63 @@ def _seed_malfunction_reports(connection: sqlite3.Connection) -> None:
         """,
         reports,
     )
+
+
+def _seed_desks(connection: sqlite3.Connection) -> None:
+    sites = connection.execute(
+        "SELECT id, software FROM sites ORDER BY id").fetchall()
+    software_rows = connection.execute(
+        "SELECT id, name FROM software").fetchall()
+    software_map = {row["name"]: row["id"] for row in software_rows}
+    prefixes = ["A", "B", "C", "D", "E"]
+    desks = []
+    for index, site in enumerate(sites):
+        prefix = prefixes[index % len(prefixes)]
+        for number in range(1, 11):
+            desks.append(
+                {"site_id": site["id"], "label": f"{prefix}-{number:02d}", "status": "active"})
+    connection.executemany(
+        """
+        INSERT INTO desks (site_id, label, status)
+        VALUES (:site_id, :label, :status)
+        """,
+        desks,
+    )
+
+    desk_rows = connection.execute("SELECT id, site_id FROM desks").fetchall()
+    desk_software_rows = []
+    for desk in desk_rows:
+        site_row = next(
+            (site for site in sites if site["id"] == desk["site_id"]), None)
+        if not site_row:
+            continue
+        for software_name in json.loads(site_row["software"]):
+            software_id = software_map.get(software_name)
+            if software_id:
+                desk_software_rows.append(
+                    {"desk_id": desk["id"], "software_id": software_id})
+    connection.executemany(
+        """
+        INSERT INTO desk_software (desk_id, software_id)
+        VALUES (:desk_id, :software_id)
+        """,
+        desk_software_rows,
+    )
+    _refresh_software_counts(connection)
+
+
+def _refresh_software_counts(connection: sqlite3.Connection) -> None:
+    rows = connection.execute(
+        """
+        SELECT software_id, COUNT(*) as desk_count
+        FROM desk_software
+        GROUP BY software_id
+        """
+    ).fetchall()
+    counts = {row["software_id"]: row["desk_count"] for row in rows}
+    software_rows = connection.execute("SELECT id FROM software").fetchall()
+    for row in software_rows:
+        connection.execute(
+            "UPDATE software SET desks_count = ? WHERE id = ?",
+            (counts.get(row["id"], 0), row["id"]),
+        )

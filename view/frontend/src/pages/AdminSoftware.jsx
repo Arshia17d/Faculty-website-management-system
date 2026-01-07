@@ -1,9 +1,20 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
+import Modal from "../components/Modal";
 import { useNotification } from "../context/NotificationContext.jsx";
-import { fetchSites } from "../services/siteService";
-import { fetchSoftware } from "../services/softwareService";
+import {
+  fetchSiteDesks,
+  fetchSites,
+  updateSiteSoftware,
+} from "../services/siteService";
+import { updateDeskSoftware } from "../services/deskService";
+import {
+  createSoftware,
+  deleteSoftware,
+  fetchSoftware,
+  updateSoftware,
+} from "../services/softwareService";
 
 const tabs = [
   { id: "software-list", label: "لیست نرم‌افزارها" },
@@ -16,6 +27,20 @@ export default function AdminSoftware() {
   const [selectedSoftware, setSelectedSoftware] = useState([]);
   const [softwareList, setSoftwareList] = useState([]);
   const [sites, setSites] = useState([]);
+  const [desks, setDesks] = useState([]);
+  const [selectedSiteId, setSelectedSiteId] = useState("");
+  const [selectedDeskId, setSelectedDeskId] = useState("");
+  const [softwareModalOpen, setSoftwareModalOpen] = useState(false);
+  const [siteSoftwareModalOpen, setSiteSoftwareModalOpen] = useState(false);
+  const [softwareForm, setSoftwareForm] = useState({
+    name: "",
+    version: "",
+    licenseKey: "",
+    installedAt: "",
+  });
+  const [editingSoftware, setEditingSoftware] = useState(null);
+  const [editingSite, setEditingSite] = useState(null);
+  const [siteSoftwareSelection, setSiteSoftwareSelection] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const { notify } = useNotification();
@@ -24,6 +49,107 @@ export default function AdminSoftware() {
     () => selectedSoftware.filter(Boolean),
     [selectedSoftware]
   );
+
+  useEffect(() => {
+    if (!selectedDeskId) {
+      setSelectedSoftware([]);
+      return;
+    }
+    const desk = desks.find((item) => item.id === Number(selectedDeskId));
+    if (desk) {
+      setSelectedSoftware(desk.software ?? []);
+    }
+  }, [desks, selectedDeskId]);
+
+  const openCreateModal = () => {
+    setEditingSoftware(null);
+    setSoftwareForm({ name: "", version: "", licenseKey: "", installedAt: "" });
+    setSoftwareModalOpen(true);
+  };
+
+  const openEditModal = (software) => {
+    setEditingSoftware(software);
+    setSoftwareForm({
+      name: software.name,
+      version: software.version,
+      licenseKey: software.licenseKey,
+      installedAt: software.installedAt || "",
+    });
+    setSoftwareModalOpen(true);
+  };
+
+  const handleSaveSoftware = async (event) => {
+    event.preventDefault();
+    try {
+      if (editingSoftware) {
+        const updated = await updateSoftware(editingSoftware.id, softwareForm);
+        setSoftwareList((prev) =>
+          prev.map((item) => (item.id === updated.id ? updated : item))
+        );
+        notify("نرم‌افزار به‌روزرسانی شد");
+      } else {
+        const created = await createSoftware(softwareForm);
+        setSoftwareList((prev) => [...prev, created]);
+        notify("نرم‌افزار جدید اضافه شد");
+      }
+      setSoftwareModalOpen(false);
+    } catch (error) {
+      notify(error?.message || "ذخیره نرم‌افزار ناموفق بود.", "error");
+    }
+  };
+
+  const handleDeleteSoftware = async (softwareId) => {
+    try {
+      await deleteSoftware(softwareId);
+      setSoftwareList((prev) => prev.filter((item) => item.id !== softwareId));
+      notify("نرم‌افزار حذف شد");
+    } catch (error) {
+      notify(error?.message || "حذف نرم‌افزار ناموفق بود.", "error");
+    }
+  };
+
+  const handleDeskSave = async () => {
+    if (!selectedDeskId) {
+      notify("لطفاً میز را انتخاب کنید.", "error");
+      return;
+    }
+    try {
+      const softwareIds = selectedSoftware.map((item) => item.id);
+      const updated = await updateDeskSoftware(selectedDeskId, softwareIds);
+      setDesks((prev) =>
+        prev.map((desk) => (desk.id === updated.id ? updated : desk))
+      );
+      notify("نرم‌افزارهای میز ذخیره شد");
+    } catch (error) {
+      notify(error?.message || "ذخیره تغییرات میز ناموفق بود.", "error");
+    }
+  };
+
+  const openSiteSoftwareModal = (site) => {
+    setEditingSite(site);
+    setSiteSoftwareSelection(site.software ?? []);
+    setSiteSoftwareModalOpen(true);
+  };
+
+  const handleSaveSiteSoftware = async () => {
+    if (!editingSite) return;
+    try {
+      const updated = await updateSiteSoftware(
+        editingSite.id,
+        siteSoftwareSelection
+      );
+      setSites((prev) =>
+        prev.map((site) => (site.id === updated.id ? updated : site))
+      );
+      notify("نرم‌افزارهای سایت به‌روزرسانی شد");
+      setSiteSoftwareModalOpen(false);
+    } catch (error) {
+      notify(
+        error?.message || "به‌روزرسانی نرم‌افزارهای سایت ناموفق بود.",
+        "error"
+      );
+    }
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -45,6 +171,24 @@ export default function AdminSoftware() {
       mounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (!selectedSiteId) {
+      setDesks([]);
+      setSelectedDeskId("");
+      setSelectedSoftware([]);
+      return;
+    }
+    fetchSiteDesks(selectedSiteId)
+      .then((data) => {
+        setDesks(Array.isArray(data) ? data : []);
+        setSelectedDeskId("");
+        setSelectedSoftware([]);
+      })
+      .catch(() => {
+        notify("دریافت میزهای سایت ناموفق بود.", "error");
+      });
+  }, [notify, selectedSiteId]);
 
   return (
     <>
@@ -76,13 +220,19 @@ export default function AdminSoftware() {
 
       {activeTab === "software-list" && (
         <div className="table-container">
-          {loading && <div className="alert alert-info">در حال بارگذاری اطلاعات...</div>}
+          {loading && (
+            <div className="alert alert-info">در حال بارگذاری اطلاعات...</div>
+          )}
           {error && <div className="alert alert-danger">{error}</div>}
           <div className="table-header">
             <h3>
               <i className="fas fa-boxes" /> نرم‌افزارهای موجود
             </h3>
-            <button type="button" className="btn btn-primary">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={openCreateModal}
+            >
               <i className="fas fa-plus" /> افزودن نرم‌افزار جدید
             </button>
           </div>
@@ -106,10 +256,18 @@ export default function AdminSoftware() {
                   <td>{item.installedAt}</td>
                   <td>{item.desksCount}</td>
                   <td>
-                    <button type="button" className="btn btn-warning btn-sm">
+                    <button
+                      type="button"
+                      className="btn btn-warning btn-sm"
+                      onClick={() => openEditModal(item)}
+                    >
                       ویرایش
                     </button>
-                    <button type="button" className="btn btn-danger btn-sm">
+                    <button
+                      type="button"
+                      className="btn btn-danger btn-sm"
+                      onClick={() => handleDeleteSoftware(item.id)}
+                    >
                       حذف
                     </button>
                   </td>
@@ -130,7 +288,12 @@ export default function AdminSoftware() {
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="selectSiteForDesk">انتخاب سایت</label>
-                <select id="selectSiteForDesk" className="form-control">
+                <select
+                  id="selectSiteForDesk"
+                  className="form-control"
+                  value={selectedSiteId}
+                  onChange={(event) => setSelectedSiteId(event.target.value)}
+                >
                   <option value="">لطفاً سایت را انتخاب کنید</option>
                   {sites.map((site) => (
                     <option key={site.id} value={site.id}>
@@ -142,8 +305,19 @@ export default function AdminSoftware() {
 
               <div className="form-group">
                 <label htmlFor="selectDesk">انتخاب میز</label>
-                <select id="selectDesk" className="form-control" defaultValue="" disabled>
+                <select
+                  id="selectDesk"
+                  className="form-control"
+                  value={selectedDeskId}
+                  onChange={(event) => setSelectedDeskId(event.target.value)}
+                  disabled={!selectedSiteId}
+                >
                   <option value="">ابتدا سایت را انتخاب کنید</option>
+                  {desks.map((desk) => (
+                    <option key={desk.id} value={desk.id}>
+                      {desk.label}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -157,7 +331,9 @@ export default function AdminSoftware() {
                     <button
                       type="button"
                       onClick={() =>
-                        setSelectedSoftware((prev) => prev.filter((item) => item.id !== software.id))
+                        setSelectedSoftware((prev) =>
+                          prev.filter((item) => item.id !== software.id)
+                        )
                       }
                     >
                       <i className="fas fa-times" />
@@ -177,12 +353,18 @@ export default function AdminSoftware() {
                     defaultValue=""
                     onChange={(event) => {
                       const id = Number(event.target.value);
-                      const software = softwareList.find((item) => item.id === id);
-                      if (software && !selectedSoftware.some((item) => item.id === id)) {
+                      const software = softwareList.find(
+                        (item) => item.id === id
+                      );
+                      if (
+                        software &&
+                        !selectedSoftware.some((item) => item.id === id)
+                      ) {
                         setSelectedSoftware((prev) => [...prev, software]);
                       }
                       event.target.value = "";
                     }}
+                    disabled={!selectedDeskId}
                   >
                     <option value="">نرم‌افزار را انتخاب کنید</option>
                     {softwareList.map((software) => (
@@ -197,7 +379,8 @@ export default function AdminSoftware() {
                     type="button"
                     className="btn btn-primary"
                     style={{ width: "100%" }}
-                    onClick={() => notify("نرم‌افزار با موفقیت اضافه شد")}
+                    onClick={() => notify("نرم‌افزار به لیست اضافه شد")}
+                    disabled={!selectedDeskId}
                   >
                     <i className="fas fa-plus" /> افزودن
                   </button>
@@ -206,7 +389,13 @@ export default function AdminSoftware() {
             </div>
 
             <div className="form-group" style={{ marginTop: "30px" }}>
-              <button type="button" className="btn btn-success" style={{ width: "100%", padding: "12px" }}>
+              <button
+                type="button"
+                className="btn btn-success"
+                style={{ width: "100%", padding: "12px" }}
+                onClick={handleDeskSave}
+                disabled={!selectedDeskId}
+              >
                 <i className="fas fa-save" /> ذخیره تغییرات
               </button>
             </div>
@@ -225,13 +414,36 @@ export default function AdminSoftware() {
                   <th>شماره میز</th>
                   <th>وضعیت</th>
                   <th>نرم‌افزارهای نصب شده</th>
-                  <th>عملیات</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td colSpan={5}>اطلاعات میزها هنوز ثبت نشده است.</td>
-                </tr>
+                {desks.length === 0 ? (
+                  <tr>
+                    <td colSpan={4}>اطلاعات میزها هنوز ثبت نشده است.</td>
+                  </tr>
+                ) : (
+                  desks.map((desk) => (
+                    <tr key={desk.id}>
+                      <td>
+                        {sites.find(
+                          (site) => site.id === Number(selectedSiteId)
+                        )?.name ?? "-"}
+                      </td>
+                      <td>{desk.label}</td>
+                      <td>{desk.status === "active" ? "فعال" : "غیرفعال"}</td>
+                      <td>
+                        {desk.software?.length
+                          ? desk.software
+                              .map(
+                                (software) =>
+                                  `${software.name} ${software.version}`
+                              )
+                              .join("، ")
+                          : "بدون نرم‌افزار"}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -264,7 +476,11 @@ export default function AdminSoftware() {
                       ))}
                     </div>
                     <div style={{ marginTop: "20px" }}>
-                      <button type="button" className="btn btn-outline btn-sm">
+                      <button
+                        type="button"
+                        className="btn btn-outline btn-sm"
+                        onClick={() => openSiteSoftwareModal(site)}
+                      >
                         <i className="fas fa-edit" /> ویرایش نرم‌افزارها
                       </button>
                     </div>
@@ -275,6 +491,147 @@ export default function AdminSoftware() {
           </div>
         </div>
       )}
+      <Modal
+        open={softwareModalOpen}
+        title={editingSoftware ? "ویرایش نرم‌افزار" : "افزودن نرم‌افزار جدید"}
+        onClose={() => setSoftwareModalOpen(false)}
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn-outline"
+              onClick={() => setSoftwareModalOpen(false)}
+            >
+              انصراف
+            </button>
+            <button
+              type="submit"
+              form="software-form"
+              className="btn btn-primary"
+            >
+              ذخیره
+            </button>
+          </>
+        }
+      >
+        <form id="software-form" onSubmit={handleSaveSoftware}>
+          <div className="form-group">
+            <label htmlFor="softwareName">نام نرم‌افزار</label>
+            <input
+              id="softwareName"
+              className="form-control"
+              value={softwareForm.name}
+              onChange={(event) =>
+                setSoftwareForm((prev) => ({
+                  ...prev,
+                  name: event.target.value,
+                }))
+              }
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="softwareVersion">نسخه</label>
+            <input
+              id="softwareVersion"
+              className="form-control"
+              value={softwareForm.version}
+              onChange={(event) =>
+                setSoftwareForm((prev) => ({
+                  ...prev,
+                  version: event.target.value,
+                }))
+              }
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="softwareLicense">کلید لایسنس</label>
+            <input
+              id="softwareLicense"
+              className="form-control"
+              value={softwareForm.licenseKey}
+              onChange={(event) =>
+                setSoftwareForm((prev) => ({
+                  ...prev,
+                  licenseKey: event.target.value,
+                }))
+              }
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="softwareInstalled">تاریخ نصب</label>
+            <input
+              id="softwareInstalled"
+              className="form-control"
+              value={softwareForm.installedAt}
+              onChange={(event) =>
+                setSoftwareForm((prev) => ({
+                  ...prev,
+                  installedAt: event.target.value,
+                }))
+              }
+            />
+          </div>
+        </form>
+      </Modal>
+
+      <Modal
+        open={siteSoftwareModalOpen}
+        title={
+          editingSite
+            ? `ویرایش نرم‌افزارهای ${editingSite.name}`
+            : "ویرایش نرم‌افزارها"
+        }
+        onClose={() => setSiteSoftwareModalOpen(false)}
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn-outline"
+              onClick={() => setSiteSoftwareModalOpen(false)}
+            >
+              انصراف
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={handleSaveSiteSoftware}
+            >
+              ذخیره
+            </button>
+          </>
+        }
+      >
+        <div className="form-group">
+          <label htmlFor="siteSoftwareSelect">نرم‌افزارهای سایت</label>
+          <select
+            id="siteSoftwareSelect"
+            className="form-control"
+            multiple
+            style={{ height: "150px" }}
+            value={siteSoftwareSelection}
+            onChange={(event) =>
+              setSiteSoftwareSelection(
+                Array.from(
+                  event.target.selectedOptions,
+                  (option) => option.value
+                )
+              )
+            }
+          >
+            {softwareList.map((software) => (
+              <option key={software.id} value={software.name}>
+                {software.name} {software.version}
+              </option>
+            ))}
+          </select>
+          <small className="form-text text-muted">
+            برای انتخاب چندگانه کلید Ctrl را نگه دارید
+          </small>
+        </div>
+      </Modal>
     </>
   );
 }

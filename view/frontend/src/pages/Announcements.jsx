@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import { useNotification } from "../context/NotificationContext.jsx";
-import { createAnnouncement, fetchAnnouncements } from "../services/announcementService";
+import {
+  createAnnouncement,
+  deleteAnnouncement,
+  fetchAnnouncements,
+} from "../services/announcementService";
 
 const priorityLabels = {
   high: "بالا",
@@ -11,7 +15,24 @@ const priorityLabels = {
 
 export default function Announcements({ user }) {
   const { notify } = useNotification();
-  const [form, setForm] = useState({ title: "", content: "", priority: "medium" });
+ const [form, setForm] = useState({
+   title: "",
+   content: "",
+   priority: "medium",
+   category: "general",
+ });
+ const [filters, setFilters] = useState({
+   priority: "",
+   date: "",
+   category: "",
+   search: "",
+ });
+ const [appliedFilters, setAppliedFilters] = useState({
+   priority: "",
+   date: "",
+   category: "",
+   search: "",
+ });
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -44,17 +65,66 @@ export default function Announcements({ user }) {
         title: form.title,
         content: form.content,
         priority: form.priority,
+        category: form.category,
         createdBy: user?.name ?? "ادمین",
         date: new Date().toLocaleDateString("fa-IR"),
       };
       const created = await createAnnouncement(payload);
       setAnnouncements((prev) => [created, ...prev]);
       notify("اعلان با موفقیت ایجاد شد");
-      setForm({ title: "", content: "", priority: "medium" });
+      setForm({
+        title: "",
+        content: "",
+        priority: "medium",
+        category: "general",
+      });
     } catch (error) {
       notify(error?.message || "ثبت اعلان ناموفق بود.", "error");
     }
   };
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteAnnouncement(id);
+      setAnnouncements((prev) => prev.filter((item) => item.id !== id));
+      notify("اعلان حذف شد");
+    } catch (error) {
+      notify(error?.message || "حذف اعلان ناموفق بود.", "error");
+    }
+  };
+
+  const filteredAnnouncements = announcements.filter((announcement) => {
+    if (
+      appliedFilters.priority &&
+      announcement.priority !== appliedFilters.priority
+    ) {
+      return false;
+    }
+    if (
+      appliedFilters.category &&
+      announcement.category !== appliedFilters.category
+    ) {
+      return false;
+    }
+    if (appliedFilters.search) {
+      const query = appliedFilters.search.trim().toLowerCase();
+      if (
+        !announcement.title.toLowerCase().includes(query) &&
+        !announcement.content.toLowerCase().includes(query)
+      ) {
+        return false;
+      }
+    }
+    if (appliedFilters.date) {
+      const filterDate = new Date(appliedFilters.date).toLocaleDateString(
+        "fa-IR"
+      );
+      if (announcement.date !== filterDate) {
+        return false;
+      }
+    }
+    return true;
+  });
 
   return (
     <>
@@ -70,7 +140,9 @@ export default function Announcements({ user }) {
                 id="title"
                 className="form-control"
                 value={form.title}
-                onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))}
+                onChange={(event) =>
+                  setForm((prev) => ({ ...prev, title: event.target.value }))
+                }
                 required
               />
             </div>
@@ -81,7 +153,9 @@ export default function Announcements({ user }) {
                 className="form-control"
                 rows={4}
                 value={form.content}
-                onChange={(event) => setForm((prev) => ({ ...prev, content: event.target.value }))}
+                onChange={(event) =>
+                  setForm((prev) => ({ ...prev, content: event.target.value }))
+                }
                 required
               />
             </div>
@@ -91,11 +165,30 @@ export default function Announcements({ user }) {
                 id="priority"
                 className="form-control"
                 value={form.priority}
-                onChange={(event) => setForm((prev) => ({ ...prev, priority: event.target.value }))}
+                onChange={(event) =>
+                  setForm((prev) => ({ ...prev, priority: event.target.value }))
+                }
               >
                 <option value="high">بالا</option>
                 <option value="medium">متوسط</option>
                 <option value="low">پایین</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label htmlFor="category">دسته‌بندی</label>
+              <select
+                id="category"
+                className="form-control"
+                value={form.category}
+                onChange={(event) =>
+                  setForm((prev) => ({ ...prev, category: event.target.value }))
+                }
+              >
+                <option value="maintenance">تعمیرات</option>
+                <option value="software">نرم‌افزار</option>
+                <option value="schedule">زمان‌بندی</option>
+                <option value="event">رویداد</option>
+                <option value="general">عمومی</option>
               </select>
             </div>
             <button type="submit" className="btn btn-primary">
@@ -106,9 +199,11 @@ export default function Announcements({ user }) {
       )}
 
       <div className="announcements-list">
-        {loading && <div className="alert alert-info">در حال بارگذاری اعلان‌ها...</div>}
+        {loading && (
+          <div className="alert alert-info">در حال بارگذاری اعلان‌ها...</div>
+        )}
         {error && <div className="alert alert-danger">{error}</div>}
-        {announcements.map((announcement) => (
+        {filteredAnnouncements.map((announcement) => (
           <div key={announcement.id} className="announcement-card fade-in">
             <div className="announcement-header">
               <h4>{announcement.title}</h4>
@@ -134,7 +229,15 @@ export default function Announcements({ user }) {
               <span>
                 <i className="fas fa-calendar" /> {announcement.date}
               </span>
-              {isAdmin && <button className="btn btn-danger btn-sm">حذف</button>}
+              {isAdmin && (
+                <button
+                  type="button"
+                  className="btn btn-danger btn-sm"
+                  onClick={() => handleDelete(announcement.id)}
+                >
+                  حذف
+                </button>
+              )}
             </div>
           </div>
         ))}
@@ -150,7 +253,17 @@ export default function Announcements({ user }) {
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="announcementPriority">اولویت</label>
-              <select id="announcementPriority" className="form-control">
+              <select
+                id="announcementPriority"
+                className="form-control"
+                value={filters.priority}
+                onChange={(event) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    priority: event.target.value,
+                  }))
+                }
+              >
                 <option value="">همه اولویت‌ها</option>
                 <option value="high">بالا</option>
                 <option value="medium">متوسط</option>
@@ -160,12 +273,30 @@ export default function Announcements({ user }) {
 
             <div className="form-group">
               <label htmlFor="announcementDate">تاریخ از</label>
-              <input type="date" id="announcementDate" className="form-control" />
+              <input
+                type="date"
+                id="announcementDate"
+                className="form-control"
+                value={filters.date}
+                onChange={(event) =>
+                  setFilters((prev) => ({ ...prev, date: event.target.value }))
+                }
+              />
             </div>
 
             <div className="form-group">
               <label htmlFor="announcementCategory">دسته‌بندی</label>
-              <select id="announcementCategory" className="form-control">
+              <select
+                id="announcementCategory"
+                className="form-control"
+                value={filters.category}
+                onChange={(event) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    category: event.target.value,
+                  }))
+                }
+              >
                 <option value="">همه دسته‌بندی‌ها</option>
                 <option value="maintenance">تعمیرات</option>
                 <option value="software">نرم‌افزار</option>
@@ -177,15 +308,45 @@ export default function Announcements({ user }) {
 
             <div className="form-group">
               <label htmlFor="announcementSearch">جست‌وجو در متن</label>
-              <input type="text" id="announcementSearch" className="form-control" placeholder="کلیدواژه" />
+              <input
+                type="text"
+                id="announcementSearch"
+                className="form-control"
+                placeholder="کلیدواژه"
+                value={filters.search}
+                onChange={(event) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    search: event.target.value,
+                  }))
+                }
+              />
             </div>
           </div>
 
           <div className="filter-actions">
-            <button type="button" className="btn btn-primary">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => setAppliedFilters(filters)}
+            >
               <i className="fas fa-search" /> اعمال فیلتر
             </button>
-            <button type="button" className="btn btn-outline" style={{ marginRight: "10px" }}>
+            <button
+              type="button"
+              className="btn btn-outline"
+              style={{ marginRight: "10px" }}
+              onClick={() => {
+                const reset = {
+                  priority: "",
+                  date: "",
+                  category: "",
+                  search: "",
+                };
+                setFilters(reset);
+                setAppliedFilters(reset);
+              }}
+            >
               <i className="fas fa-redo" /> بازنشانی
             </button>
           </div>

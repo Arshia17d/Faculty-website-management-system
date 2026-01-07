@@ -24,5 +24,10 @@ export async function apiRequest(path, options = {}) {
     throw new Error(errorText || "خطا در ارتباط با سرور");
   }
 
+   if (response.status === 204) {
+     return null;
+   }
+
+
   return response.json();
 }

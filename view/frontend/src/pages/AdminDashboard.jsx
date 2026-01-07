@@ -3,8 +3,13 @@ import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import { useNotification } from "../context/NotificationContext.jsx";
 import { fetchReports } from "../services/malfunctionService";
-import { fetchReservations, updateReservationStatus } from "../services/reservationService";
-import { fetchSites } from "../services/siteService";
+import Modal from "../components/Modal";
+import {
+  fetchReservations,
+  updateReservationStatus,
+} from "../services/reservationService";
+import { createSite, fetchSites } from "../services/siteService";
+import { fetchSoftware } from "../services/softwareService";
 
 const formatNumber = (value) => Number(value).toLocaleString("fa-IR");
 
@@ -12,6 +17,14 @@ export default function AdminDashboard() {
   const [reservations, setReservations] = useState([]);
   const [sites, setSites] = useState([]);
   const [reports, setReports] = useState([]);
+  const [softwareList, setSoftwareList] = useState([]);
+  const [siteModalOpen, setSiteModalOpen] = useState(false);
+  const [siteForm, setSiteForm] = useState({
+    name: "",
+    location: "",
+    totalDesks: "",
+    software: [],
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const { notify } = useNotification();
@@ -19,12 +32,20 @@ export default function AdminDashboard() {
   useEffect(() => {
     let mounted = true;
     const loadData = () =>
-      Promise.all([fetchReservations(), fetchSites(), fetchReports()])
-        .then(([reservationsData, sitesData, reportsData]) => {
+      Promise.all([
+        fetchReservations(),
+        fetchSites(),
+        fetchReports(),
+        fetchSoftware(),
+      ])
+        .then(([reservationsData, sitesData, reportsData, softwareData]) => {
           if (!mounted) return;
-          setReservations(Array.isArray(reservationsData) ? reservationsData : []);
+          setReservations(
+            Array.isArray(reservationsData) ? reservationsData : []
+          );
           setSites(Array.isArray(sitesData) ? sitesData : []);
           setReports(Array.isArray(reportsData) ? reportsData : []);
+          setSoftwareList(Array.isArray(softwareData) ? softwareData : []);
           setError("");
         })
         .catch(() => {
@@ -43,31 +64,61 @@ export default function AdminDashboard() {
     };
   }, []);
 
-  const pendingReservations = reservations.filter((item) => item.status === "pending");
+  const pendingReservations = reservations.filter(
+    (item) => item.status === "pending"
+  );
 
   const stats = useMemo(() => {
     const totalDesks = sites.reduce((sum, site) => sum + site.totalDesks, 0);
     const freeDesks = sites.reduce((sum, site) => sum + site.freeDesks, 0);
-    const openReports = reports.filter((report) => report.status === "pending").length;
+    const openReports = reports.filter(
+      (report) => report.status === "pending"
+    ).length;
     return { totalDesks, freeDesks, openReports };
   }, [reports, sites]);
 
-  const handleReservationAction = async (reservationId, status, actionLabel) => {
+  const handleReservationAction = async (
+    reservationId,
+    status,
+    actionLabel
+  ) => {
     try {
       await updateReservationStatus(reservationId, status);
       setReservations((prev) =>
-        prev.map((item) => (item.id === reservationId ? { ...item, status } : item))
+        prev.map((item) =>
+          item.id === reservationId ? { ...item, status } : item
+        )
       );
       notify(actionLabel);
     } catch (error) {
       notify(error?.message || "به روز رسانی رزرو ناموفق بود.", "error");
     }
   };
+  const handleCreateSite = async (event) => {
+    event.preventDefault();
+    try {
+      const payload = {
+        name: siteForm.name,
+        location: siteForm.location,
+        totalDesks: Number(siteForm.totalDesks),
+        software: siteForm.software,
+      };
+      const created = await createSite(payload);
+      setSites((prev) => [...prev, created]);
+      notify("سایت جدید اضافه شد");
+      setSiteForm({ name: "", location: "", totalDesks: "", software: [] });
+      setSiteModalOpen(false);
+    } catch (error) {
+      notify(error?.message || "افزودن سایت ناموفق بود.", "error");
+    }
+  };
 
   return (
     <>
       <Header title="داشبورد مدیریت سیستم" icon="fa-home" />
-      {loading && <div className="alert alert-info">در حال بارگذاری اطلاعات...</div>}
+      {loading && (
+        <div className="alert alert-info">در حال بارگذاری اطلاعات...</div>
+      )}
       {error && <div className="alert alert-danger">{error}</div>}
 
       <div className="stats-cards">
@@ -121,7 +172,12 @@ export default function AdminDashboard() {
             <Link to="/admin/software" className="btn btn-primary">
               <i className="fas fa-cogs" /> مدیریت نرم‌افزارها
             </Link>
-            <button type="button" className="btn btn-outline" style={{ marginRight: "10px" }}>
+            <button
+              type="button"
+              className="btn btn-outline"
+              style={{ marginRight: "10px" }}
+              onClick={() => setSiteModalOpen(true)}
+            >
               <i className="fas fa-plus" /> افزودن سایت
             </button>
           </div>
@@ -132,7 +188,9 @@ export default function AdminDashboard() {
               <div key={site.id} className="site-card fade-in">
                 <div className="site-header">
                   <h3>{site.name}</h3>
-                  <span className="status-badge status-free">{site.freeDesks} میز آزاد</span>
+                  <span className="status-badge status-free">
+                    {site.freeDesks} میز آزاد
+                  </span>
                 </div>
                 <div className="site-body">
                   <p>
@@ -144,19 +202,28 @@ export default function AdminDashboard() {
                       <div className="desk-status-label">کل میزها</div>
                     </div>
                     <div className="desk-status-item">
-                      <div className="desk-status-count" style={{ color: "#27ae60" }}>
+                      <div
+                        className="desk-status-count"
+                        style={{ color: "#27ae60" }}
+                      >
                         {site.freeDesks}
                       </div>
                       <div className="desk-status-label">آزاد</div>
                     </div>
                     <div className="desk-status-item">
-                      <div className="desk-status-count" style={{ color: "#f39c12" }}>
+                      <div
+                        className="desk-status-count"
+                        style={{ color: "#f39c12" }}
+                      >
                         {site.occupiedDesks}
                       </div>
                       <div className="desk-status-label">اشغال</div>
                     </div>
                     <div className="desk-status-item">
-                      <div className="desk-status-count" style={{ color: "#c0392b" }}>
+                      <div
+                        className="desk-status-count"
+                        style={{ color: "#c0392b" }}
+                      >
                         {site.underRepairDesks}
                       </div>
                       <div className="desk-status-label">تعمیر</div>
@@ -172,9 +239,12 @@ export default function AdminDashboard() {
                       ))}
                     </div>
                   </div>
-                  <button type="button" className="btn btn-outline btn-sm mt-3">
+                  <Link
+                    to="/admin/software"
+                    className="btn btn-outline btn-sm mt-3"
+                  >
                     مدیریت نرم‌افزارها
-                  </button>
+                  </Link>
                 </div>
               </div>
             ))}
@@ -221,14 +291,26 @@ export default function AdminDashboard() {
                     <button
                       type="button"
                       className="btn btn-success btn-sm"
-                      onClick={() => handleReservationAction(item.id, "approved", "رزرو با موفقیت تایید شد")}
+                      onClick={() =>
+                        handleReservationAction(
+                          item.id,
+                          "approved",
+                          "رزرو با موفقیت تایید شد"
+                        )
+                      }
                     >
                       تایید
                     </button>
                     <button
                       type="button"
                       className="btn btn-danger btn-sm"
-                      onClick={() => handleReservationAction(item.id, "rejected", "رزرو رد شد")}
+                      onClick={() =>
+                        handleReservationAction(
+                          item.id,
+                          "rejected",
+                          "رزرو رد شد"
+                        )
+                      }
                     >
                       رد
                     </button>
@@ -277,7 +359,11 @@ export default function AdminDashboard() {
                         : "status-approved"
                     }`}
                   >
-                    {report.priority === "high" ? "بالا" : report.priority === "medium" ? "متوسط" : "پایین"}
+                    {report.priority === "high"
+                      ? "بالا"
+                      : report.priority === "medium"
+                      ? "متوسط"
+                      : "پایین"}
                   </span>
                 </td>
                 <td>
@@ -302,6 +388,105 @@ export default function AdminDashboard() {
           </tbody>
         </table>
       </div>
+
+      <Modal
+        open={siteModalOpen}
+        title="افزودن سایت جدید"
+        onClose={() => setSiteModalOpen(false)}
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn-outline"
+              onClick={() => setSiteModalOpen(false)}
+            >
+              انصراف
+            </button>
+            <button
+              type="submit"
+              form="site-create-form"
+              className="btn btn-primary"
+            >
+              ذخیره
+            </button>
+          </>
+        }
+      >
+        <form id="site-create-form" onSubmit={handleCreateSite}>
+          <div className="form-group">
+            <label htmlFor="siteName">نام سایت</label>
+            <input
+              id="siteName"
+              className="form-control"
+              value={siteForm.name}
+              onChange={(event) =>
+                setSiteForm((prev) => ({ ...prev, name: event.target.value }))
+              }
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="siteLocation">موقعیت</label>
+            <input
+              id="siteLocation"
+              className="form-control"
+              value={siteForm.location}
+              onChange={(event) =>
+                setSiteForm((prev) => ({
+                  ...prev,
+                  location: event.target.value,
+                }))
+              }
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="siteDesks">تعداد کل میزها</label>
+            <input
+              id="siteDesks"
+              type="number"
+              min="1"
+              className="form-control"
+              value={siteForm.totalDesks}
+              onChange={(event) =>
+                setSiteForm((prev) => ({
+                  ...prev,
+                  totalDesks: event.target.value,
+                }))
+              }
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="siteSoftware">نرم‌افزارهای پیش‌فرض</label>
+            <select
+              id="siteSoftware"
+              className="form-control"
+              multiple
+              style={{ height: "120px" }}
+              value={siteForm.software}
+              onChange={(event) =>
+                setSiteForm((prev) => ({
+                  ...prev,
+                  software: Array.from(
+                    event.target.selectedOptions,
+                    (option) => option.value
+                  ),
+                }))
+              }
+            >
+              {softwareList.map((software) => (
+                <option key={software.id} value={software.name}>
+                  {software.name}
+                </option>
+              ))}
+            </select>
+            <small className="form-text text-muted">
+              برای انتخاب چندگانه کلید Ctrl را نگه دارید
+            </small>
+          </div>
+        </form>
+      </Modal>
     </>
   );
 }

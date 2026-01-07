@@ -17,3 +17,22 @@ class Site(BaseModel):
     class Config:
         populate_by_name = True
         allow_population_by_field_name = True
+
+
+class SiteCreate(BaseModel):
+    name: str
+    location: str
+    total_desks: int = Field(alias="totalDesks")
+    software: List[str] = []
+
+    class Config:
+        populate_by_name = True
+        allow_population_by_field_name = True
+
+
+class SiteSoftwareUpdate(BaseModel):
+    software: List[str]
+
+    class Config:
+        populate_by_name = True
+        allow_population_by_field_name = True

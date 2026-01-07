@@ -10,3 +10,10 @@ export function createAnnouncement(payload) {
     body: JSON.stringify(payload),
   });
 }
+
+
+export function deleteAnnouncement(id) {
+  return apiRequest(`/announcements/${id}`, {
+    method: "DELETE",
+  });
+}

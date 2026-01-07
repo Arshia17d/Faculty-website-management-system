@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config.settings import settings
 from app.routes.announcement_routes import router as announcement_router
 from app.routes.auth_routes import router as auth_router
+from app.routes.desk_routes import router as desk_router
 from app.routes.malfunction_routes import router as malfunction_router
 from app.routes.reservation_routes import router as reservation_router
 from app.routes.site_routes import router as site_router
@@ -33,6 +34,7 @@ app.include_router(site_router, prefix="/api")
 app.include_router(announcement_router, prefix="/api")
 app.include_router(malfunction_router, prefix="/api")
 app.include_router(user_router, prefix="/api")
+app.include_router(desk_router, prefix="/api")
 
 
 @app.on_event("startup")

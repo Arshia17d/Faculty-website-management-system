@@ -1,8 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
+import Modal from "../components/Modal";
 import { useNotification } from "../context/NotificationContext.jsx";
-import { fetchReservations, updateReservationStatus } from "../services/reservationService";
+import {
+  fetchReservations,
+  updateReservationStatus,
+} from "../services/reservationService";
 import { fetchSites } from "../services/siteService";
 
 export default function AdminReservations() {
@@ -11,6 +15,7 @@ export default function AdminReservations() {
   const [sites, setSites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedReservation, setSelectedReservation] = useState(null);
 
   useEffect(() => {
     let mounted = true;
@@ -18,7 +23,9 @@ export default function AdminReservations() {
       Promise.all([fetchReservations(), fetchSites()])
         .then(([reservationsData, sitesData]) => {
           if (!mounted) return;
-          setReservations(Array.isArray(reservationsData) ? reservationsData : []);
+          setReservations(
+            Array.isArray(reservationsData) ? reservationsData : []
+          );
           setSites(Array.isArray(sitesData) ? sitesData : []);
           setError("");
         })
@@ -56,7 +63,9 @@ export default function AdminReservations() {
     try {
       await updateReservationStatus(reservationId, status);
       setReservations((prev) =>
-        prev.map((item) => (item.id === reservationId ? { ...item, status } : item))
+        prev.map((item) =>
+          item.id === reservationId ? { ...item, status } : item
+        )
       );
       notify(message);
     } catch (error) {
@@ -66,11 +75,21 @@ export default function AdminReservations() {
 
   const stats = useMemo(() => {
     const total = reservations.length;
-    const pending = reservations.filter((item) => item.status === "pending").length;
-    const approved = reservations.filter((item) => item.status === "approved").length;
-    const rejected = reservations.filter((item) => item.status === "rejected").length;
+    const pending = reservations.filter(
+      (item) => item.status === "pending"
+    ).length;
+    const approved = reservations.filter(
+      (item) => item.status === "approved"
+    ).length;
+    const rejected = reservations.filter(
+      (item) => item.status === "rejected"
+    ).length;
     return { total, pending, approved, rejected };
   }, [reservations]);
+
+  const activeReservation = reservations.find(
+    (item) => item.id === selectedReservation
+  );
 
   return (
     <>
@@ -86,7 +105,9 @@ export default function AdminReservations() {
       />
 
       <div className="table-container">
-        {loading && <div className="alert alert-info">در حال بارگذاری اطلاعات...</div>}
+        {loading && (
+          <div className="alert alert-info">در حال بارگذاری اطلاعات...</div>
+        )}
         {error && <div className="alert alert-danger">{error}</div>}
         <div className="table-header">
           <h3>
@@ -137,7 +158,11 @@ export default function AdminReservations() {
             <button type="button" className="btn btn-primary">
               <i className="fas fa-search" /> اعمال فیلتر
             </button>
-            <button type="button" className="btn btn-outline" style={{ marginRight: "10px" }}>
+            <button
+              type="button"
+              className="btn btn-outline"
+              style={{ marginRight: "10px" }}
+            >
               <i className="fas fa-redo" /> بازنشانی
             </button>
           </div>
@@ -187,7 +212,11 @@ export default function AdminReservations() {
                         : "status-rejected"
                     }`}
                   >
-                    {item.status === "approved" ? "تایید شده" : item.status === "pending" ? "در انتظار" : "رد شده"}
+                    {item.status === "approved"
+                      ? "تایید شده"
+                      : item.status === "pending"
+                      ? "در انتظار"
+                      : "رد شده"}
                   </span>
                 </td>
                 <td>
@@ -196,14 +225,22 @@ export default function AdminReservations() {
                       <button
                         type="button"
                         className="btn btn-success btn-sm"
-                        onClick={() => handleUpdateStatus(item.id, "approved", "رزرو با موفقیت تایید شد")}
+                        onClick={() =>
+                          handleUpdateStatus(
+                            item.id,
+                            "approved",
+                            "رزرو با موفقیت تایید شد"
+                          )
+                        }
                       >
                         تایید
                       </button>
                       <button
                         type="button"
                         className="btn btn-danger btn-sm"
-                        onClick={() => handleUpdateStatus(item.id, "rejected", "رزرو رد شد")}
+                        onClick={() =>
+                          handleUpdateStatus(item.id, "rejected", "رزرو رد شد")
+                        }
                       >
                         رد
                       </button>
@@ -213,12 +250,18 @@ export default function AdminReservations() {
                     <button
                       type="button"
                       className="btn btn-warning btn-sm"
-                      onClick={() => handleUpdateStatus(item.id, "cancelled", "رزرو لغو شد")}
+                      onClick={() =>
+                        handleUpdateStatus(item.id, "cancelled", "رزرو لغو شد")
+                      }
                     >
                       لغو
                     </button>
                   )}
-                  <button type="button" className="btn btn-outline btn-sm">
+                  <button
+                    type="button"
+                    className="btn btn-outline btn-sm"
+                    onClick={() => setSelectedReservation(item.id)}
+                  >
                     جزئیات
                   </button>
                 </td>
@@ -287,6 +330,62 @@ export default function AdminReservations() {
           </div>
         </div>
       </div>
+
+      <Modal
+        open={Boolean(selectedReservation)}
+        title="جزئیات رزرو"
+        onClose={() => setSelectedReservation(null)}
+        footer={
+          <button
+            type="button"
+            className="btn btn-outline"
+            onClick={() => setSelectedReservation(null)}
+          >
+            بستن
+          </button>
+        }
+      >
+        {activeReservation ? (
+          <div className="content-padding">
+            <p>
+              <strong>کاربر:</strong> {activeReservation.userName} (
+              {activeReservation.userId})
+            </p>
+            <p>
+              <strong>سایت:</strong> {activeReservation.siteName}
+            </p>
+            <p>
+              <strong>تاریخ:</strong> {activeReservation.date}
+            </p>
+            <p>
+              <strong>زمان:</strong> {activeReservation.startTime} -{" "}
+              {activeReservation.endTime}
+            </p>
+            <p>
+              <strong>نوع:</strong>{" "}
+              {activeReservation.type === "student" ? "رزرو میز" : "رزرو سایت"}
+            </p>
+            <p>
+              <strong>شماره میز:</strong> {activeReservation.deskId ?? "—"}
+            </p>
+            <p>
+              <strong>نرم‌افزارها:</strong>{" "}
+              {activeReservation.software?.length
+                ? activeReservation.software.join("، ")
+                : "—"}
+            </p>
+            <p>
+              <strong>هدف:</strong> {activeReservation.purpose ?? "—"}
+            </p>
+            <p>
+              <strong>تعداد دانشجویان:</strong>{" "}
+              {activeReservation.studentsCount ?? "—"}
+            </p>
+          </div>
+        ) : (
+          <div className="alert alert-info">جزئیات رزرو در دسترس نیست.</div>
+        )}
+      </Modal>
     </>
   );
 }

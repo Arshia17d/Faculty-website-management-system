@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import { useNotification } from "../context/NotificationContext.jsx";
-import { fetchReports, updateReportStatus } from "../services/malfunctionService";
+import {
+  fetchReports,
+  updateReportStatus,
+} from "../services/malfunctionService";
 import { fetchSites } from "../services/siteService";
 
 export default function AdminReports() {
@@ -41,8 +44,26 @@ export default function AdminReports() {
   const handleStart = async (reportId) => {
     try {
       await updateReportStatus(reportId, "in-progress");
-      setReports((prev) => prev.map((report) => (report.id === reportId ? { ...report, status: "in-progress" } : report)));
+      setReports((prev) =>
+        prev.map((report) =>
+          report.id === reportId ? { ...report, status: "in-progress" } : report
+        )
+      );
       notify("وضعیت گزارش به روز شد");
+    } catch (error) {
+      notify(error?.message || "به روز رسانی گزارش ناموفق بود.", "error");
+    }
+  };
+
+  const handleResolve = async (reportId) => {
+    try {
+      await updateReportStatus(reportId, "resolved");
+      setReports((prev) =>
+        prev.map((report) =>
+          report.id === reportId ? { ...report, status: "resolved" } : report
+        )
+      );
+      notify("گزارش به حالت حل شده تغییر کرد");
     } catch (error) {
       notify(error?.message || "به روز رسانی گزارش ناموفق بود.", "error");
     }
@@ -62,7 +83,9 @@ export default function AdminReports() {
       />
 
       <div className="table-container">
-        {loading && <div className="alert alert-info">در حال بارگذاری اطلاعات...</div>}
+        {loading && (
+          <div className="alert alert-info">در حال بارگذاری اطلاعات...</div>
+        )}
         {error && <div className="alert alert-danger">{error}</div>}
         <div className="table-header">
           <h3>
@@ -113,7 +136,11 @@ export default function AdminReports() {
             <button type="button" className="btn btn-primary">
               <i className="fas fa-search" /> اعمال فیلتر
             </button>
-            <button type="button" className="btn btn-outline" style={{ marginRight: "10px" }}>
+            <button
+              type="button"
+              className="btn btn-outline"
+              style={{ marginRight: "10px" }}
+            >
               <i className="fas fa-redo" /> بازنشانی
             </button>
           </div>
@@ -156,7 +183,11 @@ export default function AdminReports() {
                         : "status-approved"
                     }`}
                   >
-                    {report.priority === "high" ? "بالا" : report.priority === "medium" ? "متوسط" : "پایین"}
+                    {report.priority === "high"
+                      ? "بالا"
+                      : report.priority === "medium"
+                      ? "متوسط"
+                      : "پایین"}
                   </span>
                 </td>
                 <td>{report.date}</td>
@@ -178,9 +209,24 @@ export default function AdminReports() {
                   </span>
                 </td>
                 <td>
-                  <button type="button" className="btn btn-success btn-sm" onClick={() => handleStart(report.id)}>
-                    شروع بررسی
-                  </button>
+                  {report.status === "pending" && (
+                    <button
+                      type="button"
+                      className="btn btn-success btn-sm"
+                      onClick={() => handleStart(report.id)}
+                    >
+                      شروع بررسی
+                    </button>
+                  )}
+                  {report.status !== "resolved" && (
+                    <button
+                      type="button"
+                      className="btn btn-warning btn-sm"
+                      onClick={() => handleResolve(report.id)}
+                    >
+                      حل شد
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

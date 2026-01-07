@@ -15,6 +15,7 @@ def list_announcements() -> list[Announcement]:
             priority=row["priority"],
             date=row["date"],
             created_by=row["created_by"],
+            category=row["category"],
         )
         for row in rows
     ]
@@ -25,8 +26,8 @@ def create_announcement(payload: AnnouncementCreate) -> Announcement:
     cursor = connection.cursor()
     cursor.execute(
         """
-        INSERT INTO announcements (title, content, priority, date, created_by)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO announcements (title, content, priority, date, created_by, category)
+        VALUES (?, ?, ?, ?, ?, ?)
         """,
         (
             payload.title,
@@ -34,6 +35,7 @@ def create_announcement(payload: AnnouncementCreate) -> Announcement:
             payload.priority,
             payload.date,
             payload.created_by,
+            payload.category,
         ),
     )
     announcement_id = cursor.lastrowid
@@ -46,4 +48,13 @@ def create_announcement(payload: AnnouncementCreate) -> Announcement:
         priority=payload.priority,
         date=payload.date,
         created_by=payload.created_by,
+        category=payload.category,
     )
+
+
+def delete_announcement(announcement_id: int) -> None:
+    connection = get_connection()
+    connection.execute(
+        "DELETE FROM announcements WHERE id = ?", (announcement_id,))
+    connection.commit()
+    connection.close()

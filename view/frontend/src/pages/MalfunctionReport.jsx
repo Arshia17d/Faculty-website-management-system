@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import { useNotification } from "../context/NotificationContext.jsx";
-import { createReport } from "../services/malfunctionService";
+import { createReport, fetchReports } from "../services/malfunctionService";
 import { fetchSites } from "../services/siteService";
 
 export default function MalfunctionReport({ user }) {
@@ -16,9 +16,11 @@ export default function MalfunctionReport({ user }) {
     contact: "",
   });
   const [sites, setSites] = useState([]);
+  const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const { notify } = useNotification();
+  const reportStatusRef = useRef({});
   const dashboardPath =
     user?.role === "admin"
       ? "/admin/dashboard"
@@ -28,23 +30,43 @@ export default function MalfunctionReport({ user }) {
 
   useEffect(() => {
     let mounted = true;
-    fetchSites()
-      .then((data) => {
-        if (!mounted) return;
-        setSites(Array.isArray(data) ? data : []);
-        setError("");
-      })
-      .catch(() => {
-        if (mounted) setError("دریافت سایت‌ها ناموفق بود.");
-      })
-      .finally(() => {
-        if (mounted) setLoading(false);
-      });
+    const loadData = () =>
+      Promise.all([fetchSites(), fetchReports(user?.id)])
+        .then(([sitesData, reportsData]) => {
+          if (!mounted) return;
+          setSites(Array.isArray(sitesData) ? sitesData : []);
+          const nextReports = Array.isArray(reportsData) ? reportsData : [];
+          const statusMap = reportStatusRef.current;
+          nextReports.forEach((report) => {
+            const previousStatus = statusMap[report.id];
+            if (
+              previousStatus &&
+              previousStatus !== report.status &&
+              report.status === "resolved"
+            ) {
+              notify(`گزارش خرابی ${report.id} حل شد`);
+            }
+            statusMap[report.id] = report.status;
+          });
+          reportStatusRef.current = statusMap;
+          setReports(nextReports);
+          setError("");
+        })
+        .catch(() => {
+          if (mounted) setError("دریافت سایت‌ها ناموفق بود.");
+        })
+        .finally(() => {
+          if (mounted) setLoading(false);
+        });
+
+    loadData();
+    const intervalId = setInterval(loadData, 15000);
 
     return () => {
       mounted = false;
+      clearInterval(intervalId);
     };
-  }, []);
+  }, [notify, user?.id]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -66,6 +88,8 @@ export default function MalfunctionReport({ user }) {
         date: new Date().toLocaleDateString("fa-IR"),
         contact: form.contact,
       });
+      const updatedReports = await fetchReports(user?.id);
+      setReports(Array.isArray(updatedReports) ? updatedReports : []);
       notify("گزارش خرابی با موفقیت ثبت شد.");
       setForm({
         siteId: "",
@@ -96,7 +120,9 @@ export default function MalfunctionReport({ user }) {
 
       <div className="form-container">
         <form onSubmit={handleSubmit}>
-          {loading && <div className="alert alert-info">در حال بارگذاری اطلاعات...</div>}
+          {loading && (
+            <div className="alert alert-info">در حال بارگذاری اطلاعات...</div>
+          )}
           {error && <div className="alert alert-danger">{error}</div>}
           <div className="form-group">
             <label htmlFor="site">سایت کامپیوتری</label>
@@ -106,7 +132,9 @@ export default function MalfunctionReport({ user }) {
               required
               value={form.siteId}
               disabled={loading}
-              onChange={(event) => setForm((prev) => ({ ...prev, siteId: event.target.value }))}
+              onChange={(event) =>
+                setForm((prev) => ({ ...prev, siteId: event.target.value }))
+              }
             >
               <option value="">لطفاً سایت را انتخاب کنید</option>
               {sites.map((site) => (
@@ -125,7 +153,9 @@ export default function MalfunctionReport({ user }) {
               className="form-control"
               placeholder="مثال: A-12, B-05"
               value={form.deskId}
-              onChange={(event) => setForm((prev) => ({ ...prev, deskId: event.target.value }))}
+              onChange={(event) =>
+                setForm((prev) => ({ ...prev, deskId: event.target.value }))
+              }
             />
             <small className="form-text text-muted">
               در صورتی که میز خاصی مشکل دارد، شماره آن را وارد کنید
@@ -139,11 +169,20 @@ export default function MalfunctionReport({ user }) {
               className="form-control"
               required
               value={form.problemType}
-              onChange={(event) => setForm((prev) => ({ ...prev, problemType: event.target.value }))}
+              onChange={(event) =>
+                setForm((prev) => ({
+                  ...prev,
+                  problemType: event.target.value,
+                }))
+              }
             >
               <option value="">انتخاب کنید</option>
-              <option value="hardware">سخت‌افزاری (مانیتور، کیس، موس و ...)</option>
-              <option value="software">نرم‌افزاری (برنامه اجرا نمی‌شود، خطا می‌دهد)</option>
+              <option value="hardware">
+                سخت‌افزاری (مانیتور، کیس، موس و ...)
+              </option>
+              <option value="software">
+                نرم‌افزاری (برنامه اجرا نمی‌شود، خطا می‌دهد)
+              </option>
               <option value="network">مشکل شبکه (اینترنت، اتصال شبکه)</option>
               <option value="power">مشکل برق (سیستم روشن نمی‌شود)</option>
               <option value="other">سایر مشکلات</option>
@@ -157,7 +196,9 @@ export default function MalfunctionReport({ user }) {
               className="form-control"
               required
               value={form.priority}
-              onChange={(event) => setForm((prev) => ({ ...prev, priority: event.target.value }))}
+              onChange={(event) =>
+                setForm((prev) => ({ ...prev, priority: event.target.value }))
+              }
             >
               <option value="low">پایین (مشکل جزئی)</option>
               <option value="medium">متوسط (مشکل قابل تحمل)</option>
@@ -174,7 +215,12 @@ export default function MalfunctionReport({ user }) {
               placeholder="مشکل را به طور دقیق شرح دهید. لطفاً مراحلی که منجر به بروز مشکل شده و پیام خطا (در صورت وجود) را بنویسید."
               required
               value={form.description}
-              onChange={(event) => setForm((prev) => ({ ...prev, description: event.target.value }))}
+              onChange={(event) =>
+                setForm((prev) => ({
+                  ...prev,
+                  description: event.target.value,
+                }))
+              }
             />
           </div>
 
@@ -187,7 +233,12 @@ export default function MalfunctionReport({ user }) {
                   name="recurring"
                   value="yes"
                   checked={form.recurring === "yes"}
-                  onChange={(event) => setForm((prev) => ({ ...prev, recurring: event.target.value }))}
+                  onChange={(event) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      recurring: event.target.value,
+                    }))
+                  }
                 />
                 بله
               </label>
@@ -197,7 +248,12 @@ export default function MalfunctionReport({ user }) {
                   name="recurring"
                   value="no"
                   checked={form.recurring === "no"}
-                  onChange={(event) => setForm((prev) => ({ ...prev, recurring: event.target.value }))}
+                  onChange={(event) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      recurring: event.target.value,
+                    }))
+                  }
                 />
                 خیر
               </label>
@@ -212,21 +268,30 @@ export default function MalfunctionReport({ user }) {
               className="form-control"
               placeholder="ایمیل یا شماره تماس"
               value={form.contact}
-              onChange={(event) => setForm((prev) => ({ ...prev, contact: event.target.value }))}
+              onChange={(event) =>
+                setForm((prev) => ({ ...prev, contact: event.target.value }))
+              }
             />
-            <small className="form-text text-muted">در صورت نیاز به اطلاعات بیشتر با شما تماس گرفته می‌شود</small>
+            <small className="form-text text-muted">
+              در صورت نیاز به اطلاعات بیشتر با شما تماس گرفته می‌شود
+            </small>
           </div>
 
           <div className="form-group" style={{ marginTop: "30px" }}>
-            <button type="submit" className="btn btn-primary" style={{ width: "100%", padding: "12px" }}>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              style={{ width: "100%", padding: "12px" }}
+            >
               <i className="fas fa-paper-plane" /> ارسال گزارش خرابی
             </button>
           </div>
 
           <div className="alert alert-info">
             <i className="fas fa-info-circle" />
-            <strong>توجه:</strong> گزارش خرابی شما پس از ثبت، توسط تیم پشتیبانی بررسی خواهد شد. شما می‌توانید وضعیت گزارش
-            خود را در داشبورد پیگیری کنید.
+            <strong>توجه:</strong> گزارش خرابی شما پس از ثبت، توسط تیم پشتیبانی
+            بررسی خواهد شد. شما می‌توانید وضعیت گزارش خود را در داشبورد پیگیری
+            کنید.
           </div>
         </form>
       </div>
@@ -241,9 +306,15 @@ export default function MalfunctionReport({ user }) {
           <div className="form-row">
             <div className="form-group">
               <div className="guide-card">
-                <i className="fas fa-desktop fa-2x" style={{ color: "#3498db" }} />
+                <i
+                  className="fas fa-desktop fa-2x"
+                  style={{ color: "#3498db" }}
+                />
                 <h4>مشکلات سخت‌افزاری</h4>
-                <p>مانیتور روشن نمی‌شود، صدا ندارد، سیستم هنگ می‌کند، موس یا کیبورد کار نمی‌کند</p>
+                <p>
+                  مانیتور روشن نمی‌شود، صدا ندارد، سیستم هنگ می‌کند، موس یا
+                  کیبورد کار نمی‌کند
+                </p>
               </div>
             </div>
 
@@ -251,7 +322,10 @@ export default function MalfunctionReport({ user }) {
               <div className="guide-card">
                 <i className="fas fa-cogs fa-2x" style={{ color: "#27ae60" }} />
                 <h4>مشکلات نرم‌افزاری</h4>
-                <p>برنامه اجرا نمی‌شود، خطا می‌دهد، به روزرسانی نیاز دارد، حذف شده است</p>
+                <p>
+                  برنامه اجرا نمی‌شود، خطا می‌دهد، به روزرسانی نیاز دارد، حذف
+                  شده است
+                </p>
               </div>
             </div>
 
@@ -259,7 +333,9 @@ export default function MalfunctionReport({ user }) {
               <div className="guide-card">
                 <i className="fas fa-wifi fa-2x" style={{ color: "#f39c12" }} />
                 <h4>مشکلات شبکه</h4>
-                <p>اینترنت وصل نیست، سرعت پایین است، سایت‌های خاصی باز نمی‌شوند</p>
+                <p>
+                  اینترنت وصل نیست، سرعت پایین است، سایت‌های خاصی باز نمی‌شوند
+                </p>
               </div>
             </div>
           </div>
@@ -272,11 +348,85 @@ export default function MalfunctionReport({ user }) {
               <li>لطفاً مشکل را به طور دقیق و واضح شرح دهید.</li>
               <li>در صورت وجود پیام خطا، آن را عیناً در گزارش ذکر کنید.</li>
               <li>اگر میز خاصی مشکل دارد، حتماً شماره آن را بنویسید.</li>
-              <li>گزارشات با اولویت بالا برای مشکلات جدی است (سیستم کاملاً غیرقابل استفاده).</li>
-              <li>پس از ثبت گزارش، می‌توانید وضعیت آن را در داشبورد پیگیری کنید.</li>
+              <li>
+                گزارشات با اولویت بالا برای مشکلات جدی است (سیستم کاملاً غیرقابل
+                استفاده).
+              </li>
+              <li>
+                پس از ثبت گزارش، می‌توانید وضعیت آن را در داشبورد پیگیری کنید.
+              </li>
             </ul>
           </div>
         </div>
+      </div>
+      <div className="table-container" style={{ marginTop: "40px" }}>
+        <div className="table-header">
+          <h3>
+            <i className="fas fa-list" /> گزارش‌های ثبت شده شما
+          </h3>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>سایت</th>
+              <th>میز</th>
+              <th>شرح مشکل</th>
+              <th>اولویت</th>
+              <th>تاریخ</th>
+              <th>وضعیت</th>
+            </tr>
+          </thead>
+          <tbody>
+            {reports.length === 0 ? (
+              <tr>
+                <td colSpan={6}>گزارشی ثبت نشده است.</td>
+              </tr>
+            ) : (
+              reports.map((report) => (
+                <tr key={report.id}>
+                  <td>{report.siteName}</td>
+                  <td>{report.deskId ?? "--"}</td>
+                  <td>{report.description}</td>
+                  <td>
+                    <span
+                      className={`status-badge ${
+                        report.priority === "high"
+                          ? "status-rejected"
+                          : report.priority === "medium"
+                          ? "status-pending"
+                          : "status-approved"
+                      }`}
+                    >
+                      {report.priority === "high"
+                        ? "بالا"
+                        : report.priority === "medium"
+                        ? "متوسط"
+                        : "پایین"}
+                    </span>
+                  </td>
+                  <td>{report.date}</td>
+                  <td>
+                    <span
+                      className={`status-badge ${
+                        report.status === "pending"
+                          ? "status-pending"
+                          : report.status === "in-progress"
+                          ? "status-warning"
+                          : "status-approved"
+                      }`}
+                    >
+                      {report.status === "pending"
+                        ? "در انتظار"
+                        : report.status === "in-progress"
+                        ? "در حال بررسی"
+                        : "حل شده"}
+                    </span>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
     </>
   );

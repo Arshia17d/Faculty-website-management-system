@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Header, HTTPException
 
-from app.controllers.announcement_controller import create, get_announcements
+from app.controllers.announcement_controller import create, get_announcements, remove
 from app.models.announcement import Announcement, AnnouncementCreate
 
 router = APIRouter(prefix="/announcements", tags=["announcements"])
@@ -21,3 +21,13 @@ def create_announcement_route(
     if payload.priority not in {"high", "medium", "low"}:
         raise HTTPException(status_code=400, detail="اولویت نامعتبر است")
     return create(payload)
+
+
+@router.delete("/{announcement_id}", status_code=204)
+def delete_announcement_route(
+    announcement_id: int,
+    x_user_role: str | None = Header(default=None, alias="X-User-Role"),
+) -> None:
+    if x_user_role != "admin":
+        raise HTTPException(status_code=403, detail="دسترسی غیرمجاز")
+    remove(announcement_id)

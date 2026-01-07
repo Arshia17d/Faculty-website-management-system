@@ -107,6 +107,50 @@ body {
     margin-bottom: 1.5rem;
 }
 
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(44, 62, 80, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1200;
+    padding: 20px;
+}
+
+.modal-card {
+    background: #fff;
+    width: min(600px, 95vw);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 20px;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
 /* هدر اصلی */
 .main-header {
     background-color: var(--primary-color);
