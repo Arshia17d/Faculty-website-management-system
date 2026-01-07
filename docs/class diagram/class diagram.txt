@@ -1,0 +1,216 @@
+@startuml
+' =========================================
+' Class Diagram for College Management System
+' Converted to English for PlantUML compatibility
+' =========================================
+
+skinparam classAttributeIconSize 0
+skinparam class {
+    BackgroundColor LightYellow
+    BorderColor DarkOrange
+}
+skinparam linetype ortho
+
+' ====================
+' Classes
+' ====================
+
+class User {
+    - userID : String
+    - password : String
+    - active : Boolean
+    + login() : Boolean
+    + logout()
+    + updateProfile()
+    ' Persian: کاربر
+}
+
+class Student {
+    - studentID : String
+    - name : String
+    - faculty : String
+    + viewNotifications() : List<Notification>
+    + reportIssue()
+    ' Persian: دانشجو
+}
+
+class Teacher {
+    - teacherID : String
+    - name : String
+    - department : String
+    + reserveSite()
+    + reportIssue()
+    + viewNotifications() : List<Notification>
+    ' Persian: استاد
+}
+
+class Admin {
+    - adminID : String
+    - name : String
+    - accessLevel : Integer
+    + viewDeskStatus() : List<Desk>
+    + manageIssues()
+    + manageSoftware()
+    + approveReservation()
+    + manageNotifications()
+    + viewLogs()
+    ' Persian: ادمین
+}
+
+class Desk {
+    - deskID : String
+    - status : Boolean
+    - location : String
+    - lastRepairDate : Date
+    + assignToUser()
+    + releaseDesk()
+    + updateStatus()
+    + checkAvailability() : Boolean
+    ' Persian: میز
+}
+
+class UsageSession {
+    - sessionID : String
+    - userID : String
+    - deskID : String
+    - checkInTime : DateTime
+    - checkOutTime : DateTime
+    - duration : Integer
+    + recordCheckIn()
+    + recordCheckOut()
+    + calculateDuration() : Integer
+    ' Persian: جلسه استفاده
+}
+
+class IssueReport {
+    - reportID : String
+    - deskID : String
+    - reporterID : String
+    - description : String
+    - reportDate : DateTime
+    - status : String
+    - priority : String
+    + submit() : Boolean
+    + updateStatus()
+    + assignTechnician()
+    ' Persian: گزارش خرابی
+}
+
+class Software {
+    - softwareID : String
+    - name : String
+    - version : String
+    - licenseKey : String
+    - installDate : DateTime
+    + install() : Boolean
+    + remove() : Boolean
+    + update()
+    ' Persian: نرم افزار
+}
+
+class Reservation {
+    - reservationID : String
+    - teacherID : String
+    - siteArea : String
+    - date : Date
+    - startTime : DateTime
+    - endTime : DateTime
+    - purpose : String
+    - status : String
+    + create() : Boolean
+    + cancel()
+    + approve()
+    + reject(reason)
+    ' Persian: رزرو
+}
+
+class Notification {
+    - notificationID : String
+    - title : String
+    - content : String
+    - createdBy : String
+    - createDate : Date
+    - targetRoles : List
+    + create() : Boolean
+    + edit()
+    + delete() : Boolean
+    + send()
+    ' Persian: اعلان
+}
+
+class Role {
+    - roleID : String
+    - roleName : String
+    - permissions : List
+    + addPermission()
+    + removePermission()
+    + hasPermission() : Boolean
+    ' Persian: نقش کاربری
+}
+
+class Log {
+    - logID : String
+    - userID : String
+    - action : String
+    - ipAddress : String
+    - details : String
+    + record()
+    + search(criteria) : List<Log>
+    + export(format) : File
+    ' Persian: لاگ
+}
+
+' ====================
+' Inheritance
+' ====================
+User <|-- Student
+User <|-- Teacher
+User <|-- Admin
+
+' ====================
+' Associations
+' ====================
+Student --> IssueReport : "reports"
+Teacher --> IssueReport : "reports"
+Admin --> IssueReport : "manages"
+
+Student --> UsageSession : "creates"
+Teacher --> Reservation : "creates"
+Admin --> Reservation : "approves"
+
+Desk --> UsageSession : "hosts"
+Desk --> Software : "installed"
+
+User --> Role : "has"
+User --> Notification : "views"
+Admin --> Notification : "manages"
+
+UsageSession --> IssueReport : "related to"
+IssueReport --> Log : "generates"
+
+' ====================
+' Enumerations
+' ====================
+enum DeskStatus {
+    Free
+    Occupied
+    Reserved
+    UnderRepair
+    OutOfService
+}
+
+enum IssueStatus {
+    Pending
+    InProgress
+    Resolved
+    Closed
+}
+
+enum ReservationStatus {
+    Pending
+    Approved
+    Rejected
+    Cancelled
+}
+
+@enduml
