@@ -1,0 +1,66 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam usecase {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+}
+
+actor "دانشجو" as Student
+actor "استاد" as Teacher
+actor "ادمین" as Admin
+
+package "دانشجو" {
+    usecase "ورود با شماره دانشجویی" as UC1
+    usecase "ثبت زمان ورود و خروج" as UC2
+    usecase "تخصیص خودکار میز یا کامپیوتر" as UC3
+    usecase "ثبت گزارش خرابی" as UC6
+}
+
+package "استاد" {
+    usecase "ورود با شناسه کارمندی" as UC1T
+    usecase "ثبت زمان ورود و خروج" as UC2T
+    usecase "ثبت گزارش خرابی" as UC6T
+    usecase "رزرو سایت" as UC16
+}
+
+package "ادمین" {
+    usecase "مشاهده وضعیت میزها" as UC5
+    usecase "مدیریت گزارش‌های خرابی" as UC7
+    usecase "مدیریت نرم‌افزارها روی سیستم‌ها" as UC8
+    usecase "مدیریت کاربران و نقش‌ها" as UC10
+    usecase "مدیریت پایگاه داده" as UC12
+    usecase "گزارش‌گیری و لاگ" as UC13
+    usecase "تایید رزرو" as UC17
+}
+
+' ارتباط دانشجو
+Student --> UC1
+Student --> UC2
+Student --> UC3
+Student --> UC6
+
+UC2 --> UC1 : <<include>>
+UC3 --> UC2 : <<extend>>
+
+' ارتباط استاد
+Teacher --> UC1T
+Teacher --> UC2T
+Teacher --> UC6T
+Teacher --> UC16
+
+UC2T --> UC1T : <<include>>
+UC16 --> UC1T : <<extend>>
+
+' ارتباط ادمین
+Admin --> UC5
+Admin --> UC7
+Admin --> UC8
+Admin --> UC10
+Admin --> UC12
+Admin --> UC13
+Admin --> UC17
+
+UC7 --> UC6 : <<include>>
+UC17 --> UC16 : <<include>>
+@enduml
