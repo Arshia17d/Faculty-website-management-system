@@ -1,66 +1,54 @@
 @startuml
 left to right direction
-skinparam packageStyle rectangle
-skinparam usecase {
-    BackgroundColor LightBlue
-    BorderColor DarkBlue
-}
 
 actor "دانشجو" as Student
-actor "استاد" as Teacher
+actor "استاد" as Professor
 actor "ادمین" as Admin
 
-package "دانشجو" {
-    usecase "ورود با شماره دانشجویی" as UC1
-    usecase "ثبت زمان ورود و خروج" as UC2
-    usecase "تخصیص خودکار میز یا کامپیوتر" as UC3
-    usecase "ثبت گزارش خرابی" as UC6
+rectangle "سیستم مدیریت سایت دانشکده‌ها" {
+
+  (ورود با شماره دانشجویی یا شناسه کارمندی) as UC1
+  (ثبت زمان خروج) as UC2
+  (ثبت گزارش خرابی) as UC6
+  (رزرو سایت) as UC16
+
+  (تخصیص خودکار میز یا کامپیوتر) as UC3
+  (جلوگیری از تخصیص هم‌زمان) as UC4
+
+  (مشاهده وضعیت میزها) as UC5
+  (مدیریت گزارش‌های خرابی) as UC7
+  (تایید رزرو) as UC17
+  (جست‌وجوی پیشرفته) as UC9
+  (مدیریت کاربران و نقش‌ها) as UC10
+  (مدیریت نرم‌افزارها) as UC8
+
+  (گزارش‌گیری و لاگ) as UC13
+  (اعلان‌ها) as UC14
+  (خروجی و ورودی داده‌ها) as UC15
 }
 
-package "استاد" {
-    usecase "ورود با شناسه کارمندی" as UC1T
-    usecase "ثبت زمان ورود و خروج" as UC2T
-    usecase "ثبت گزارش خرابی" as UC6T
-    usecase "رزرو سایت" as UC16
-}
+Student -- UC1
+Student -- UC2
+Student -- UC6
+Student -- UC14
 
-package "ادمین" {
-    usecase "مشاهده وضعیت میزها" as UC5
-    usecase "مدیریت گزارش‌های خرابی" as UC7
-    usecase "مدیریت نرم‌افزارها روی سیستم‌ها" as UC8
-    usecase "مدیریت کاربران و نقش‌ها" as UC10
-    usecase "مدیریت پایگاه داده" as UC12
-    usecase "گزارش‌گیری و لاگ" as UC13
-    usecase "تایید رزرو" as UC17
-}
+Professor -- UC1
+Professor -- UC2
+Professor -- UC6
+Professor -- UC16
+Professor -- UC14
 
-' ارتباط دانشجو
-Student --> UC1
-Student --> UC2
-Student --> UC3
-Student --> UC6
+Admin -- UC5
+Admin -- UC7
+Admin -- UC17
+Admin -- UC9
+Admin -- UC10
+Admin -- UC8
+Admin -- UC14
+Admin -- UC15
 
-UC2 --> UC1 : <<include>>
-UC3 --> UC2 : <<extend>>
+UC3 ..> UC1 : <<include>>
+UC4 ..> UC3 : <<include>>
+UC16 ..> UC17 : <<extend>>
 
-' ارتباط استاد
-Teacher --> UC1T
-Teacher --> UC2T
-Teacher --> UC6T
-Teacher --> UC16
-
-UC2T --> UC1T : <<include>>
-UC16 --> UC1T : <<extend>>
-
-' ارتباط ادمین
-Admin --> UC5
-Admin --> UC7
-Admin --> UC8
-Admin --> UC10
-Admin --> UC12
-Admin --> UC13
-Admin --> UC17
-
-UC7 --> UC6 : <<include>>
-UC17 --> UC16 : <<include>>
 @enduml
