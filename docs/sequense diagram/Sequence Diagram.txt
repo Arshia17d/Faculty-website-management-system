@@ -1,0 +1,103 @@
+@startuml
+
+!define LOGIN sequenceDiagram_UC1
+!define ALLOCATE sequenceDiagram_UC3
+
+' ==================== UC1: ورود با شماره دانشجویی/کارمندی ====================
+title UC1: ورود با شماره دانشجویی/شناسه کارمندی
+
+participant "دانشجو/استاد" as User
+participant "رابط کاربری\n(صفحه ورود)" as UI
+participant "کنترلر ورود" as LoginController
+participant "سرویس\nاحراز هویت" as AuthService
+participant "پایگاه داده" as DB
+
+activate User
+User -> UI: باز کردن صفحه ورود
+activate UI
+UI -> User: نمایش فرم ورود
+deactivate UI
+
+User -> UI: وارد کردن شماره/شناسه و رمز
+activate UI
+UI -> LoginController: ارسال اطلاعات (Credentials)
+activate LoginController
+LoginController -> AuthService: درخواست اعتبارسنجی\n(شماره، رمز)
+activate AuthService
+
+AuthService -> DB: بررسی موجودی کاربر\nو تطابق رمز
+activate DB
+DB --> AuthService: اطلاعات کاربر (یا null)
+deactivate DB
+
+alt اطلاعات صحیح است
+    AuthService --> LoginController: تأیید + اطلاعات کاربر (نقش، نام)
+    deactivate AuthService
+    LoginController -> DB: ثبت نشست فعال (Session)
+    activate DB
+    DB --> LoginController: تأیید (Session ID)
+    deactivate DB
+    LoginController --> UI: موفق + انتقال به داشبورد\n+ اطلاعات نشست
+    deactivate LoginController
+    UI -> User: نمایش داشبورد مناسب (دانشجو/استاد)
+    deactivate UI
+else اطلاعات ناصحیح است
+    AuthService --> LoginController: خطا (نام کاربری/رمز نادرست)
+    deactivate AuthService
+    LoginController --> UI: پیام خطا
+    deactivate LoginController
+    UI -> User: نمایش پیام خطا
+    deactivate UI
+end
+deactivate User
+
+' ==================== UC3: تخصیص خودکار میز/کامپیوتر ====================
+newpage
+title UC3: تخصیص خودکار میز یا کامپیوتر
+
+participant "دانشجو" as Student
+participant "رابط کاربری\n(داشبورد)" as UI_Dash
+participant "کنترلر رزرو" as ReserveController
+participant "سرویس\nمدیریت منابع" as ResourceService
+participant "پایگاه داده\n(منابع)" as DB_Res
+
+activate Student
+Student -> UI_Dash: کلیک/درخواست \"استفاده از سایت\"
+activate UI_Dash
+UI_Dash -> ReserveController: درخواست تخصیص میز\n(User ID, زمان)
+activate ReserveController
+
+ReserveController -> ResourceService: یافتن میز آزاد
+activate ResourceService
+ResourceService -> DB_Res: جستجوی میزهای با وضعیت \"آزاد\"\nو قابل‌استفاده
+activate DB_Res
+DB_Res --> ResourceService: لیست میزهای آزاد (IDs)
+deactivate DB_Res
+
+alt میز آزاد وجود دارد
+    ResourceService -> ResourceService: انتخاب اولین میز آزاد\n(الگوریتم ساده FIFO)
+    ResourceService -> DB_Res: بروزرسانی وضعیت میز\nبه \"اشغال\" + ثبت User ID
+    activate DB_Res
+    DB_Res --> ResourceService: تأیید + اطلاعات میز (شماره میز، موقعیت)
+    deactivate DB_Res
+    ResourceService --> ReserveController: اطلاعات میز تخصیص‌یافته
+    deactivate ResourceService
+    ReserveController -> DB_Res: ثبت رکورد رزرو\n(User ID, میز ID, زمان شروع)
+    activate DB_Res
+    DB_Res --> ReserveController: تأیید (Reservation ID)
+    deactivate DB_Res
+    ReserveController --> UI_Dash: موفق + اطلاعات میز
+    deactivate ReserveController
+    UI_Dash -> Student: نمایش موفقیت‌آمیز\nو جزئیات میز (شماره، محل)
+    deactivate UI_Dash
+else میز آزاد وجود ندارد
+    ResourceService --> ReserveController: خطا (میز آزاد یافت نشد)
+    deactivate ResourceService
+    ReserveController --> UI_Dash: پیام خطا
+    deactivate ReserveController
+    UI_Dash -> Student: نمایش پیام \"همه میزها اشغال هستند\"
+    deactivate UI_Dash
+end
+deactivate Student
+
+@enduml
