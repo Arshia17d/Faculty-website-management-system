@@ -2,7 +2,6 @@
 
 **Faculty Computer Site Management System**
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/Python-98.1%25-blue)
 ![JavaScript](https://img.shields.io/badge/JavaScript-0.9%25-yellow)
 ![HTML](https://img.shields.io/badge/HTML-0.6%25-orange)
