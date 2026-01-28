@@ -1,0 +1,41 @@
+@startuml
+skinparam componentStyle uml2
+skinparam defaultFontName Tahoma
+
+package "لایه ارائه (Presentation Layer)" {
+    [رابط کاربری وب (Web UI)] as UI
+}
+
+package "لایه سرویس‌های تجاری (Business Layer)" {
+    component "سرویس احراز هویت" as Auth
+    component "مدیریت کاربران و نقش‌ها" as UserMgmt
+    component "سرویس تخصیص منابع\n(میز و کامپیوتر)" as ResourceMgmt
+    component "مدیریت رزرو و حضور" as Reservation
+    component "سرویس گزارش خرابی" as FaultMgmt
+    component "سرویس اطلاع‌رسانی" as Notification
+    component "ثبت لاگ ورود و خروج" as LogService
+}
+
+package "لایه داده (Data Layer)" {
+    database "پایگاه داده مرکزی" as DB
+}
+
+' ارتباطات لایه ارائه به بیزنس
+UI --> Auth
+UI --> UserMgmt
+UI --> ResourceMgmt
+UI --> FaultMgmt
+
+' ارتباطات داخلی لایه بیزنس
+ResourceMgmt ..> LogService : ثبت تردد
+Reservation ..> ResourceMgmt : چک کردن وضعیت صندلی
+
+' ارتباطات به پایگاه داده
+Auth --> DB
+UserMgmt --> DB
+ResourceMgmt --> DB
+FaultMgmt --> DB
+LogService --> DB
+Notification --> DB
+
+@enduml
